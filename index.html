@@ -1,0 +1,452 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKP Pengawas Madrasah 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a5276;--secondary:#148f77;--accent:#2ecc71;--bg:#f4f6f9;--card:#fff;--text:#2c3e50;--border:#ddd;--sidebar-w:260px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,var(--primary),#1a3c5e);color:#fff;position:fixed;height:100vh;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar h2{padding:20px;font-size:14px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);line-height:1.4}
+.sidebar nav a{display:flex;align-items:center;padding:12px 20px;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .2s}
+.sidebar nav a:hover,.sidebar nav a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--accent)}
+.sidebar nav a .icon{margin-right:10px;font-size:16px}
+.sidebar .credit{padding:15px;font-size:10px;text-align:center;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);position:absolute;bottom:0;width:100%}
+.main{margin-left:var(--sidebar-w);flex:1;padding:20px;max-width:calc(100% - var(--sidebar-w))}
+.page{display:none}
+.page.active{display:block}
+.card{background:var(--card);border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card h3{color:var(--primary);margin-bottom:15px;font-size:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid var(--primary)}
+.stat-card .num{font-size:28px;font-weight:700;color:var(--primary)}
+.stat-card .label{font-size:12px;color:#666;margin-top:5px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:8px 10px;border:1px solid var(--border);text-align:left;vertical-align:top}
+th{background:var(--primary);color:#fff;font-weight:600;white-space:nowrap}
+tr:nth-child(even){background:#f8f9fa}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#555}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px}
+.form-group textarea{resize:vertical;min-height:60px}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#154360}
+.btn-success{background:var(--secondary);color:#fff}
+.btn-success:hover{background:#0e6655}
+.btn-print{background:#e74c3c;color:#fff}
+.btn-print:hover{background:#c0392b}
+.btn-group{display:flex;gap:8px;margin:15px 0}
+.progress-bar{height:20px;background:#ecf0f1;border-radius:10px;overflow:hidden;margin:5px 0}
+.progress-bar .fill{height:100%;border-radius:10px;transition:width .5s;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.tw-tabs{display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap}
+.tw-tab{padding:8px 16px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;background:#fff}
+.tw-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-sb{background:#27ae60;color:#fff}
+.badge-b{background:#2980b9;color:#fff}
+.badge-c{background:#f39c12;color:#fff}
+.badge-k{background:#e74c3c;color:#fff}
+.hamburger{display:none;position:fixed;top:10px;left:10px;z-index:200;background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:6px;font-size:18px;cursor:pointer}
+@media(max-width:768px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0;max-width:100%}
+.hamburger{display:block}
+.stats-grid{grid-template-columns:1fr 1fr}
+.form-grid{grid-template-columns:1fr}
+}
+@media print{
+.sidebar,.hamburger,.btn,.btn-group,.tw-tabs{display:none!important}
+.main{margin-left:0;padding:0;max-width:100%}
+.page{display:block!important}
+.card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}
+}
+.eviden-link{color:var(--primary);text-decoration:underline;word-break:break-all}
+.kuadran-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;max-width:500px;margin:20px auto}
+.kuadran-cell{padding:30px;text-align:center;font-weight:700;font-size:14px;border-radius:4px}
+</style>
+</head>
+<body>
+<button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+<aside class="sidebar">
+<h2>SKP PENGAWAS MADRASAH<br>POKJAWAS KEMENAG<br>KAB. JEMBER 2026</h2>
+<nav>
+<a href="#" class="active" onclick="showPage('dashboard')"><span class="icon">📊</span>Dashboard</a>
+<a href="#" onclick="showPage('identitas')"><span class="icon">👤</span>Data Identitas</a>
+<a href="#" onclick="showPage('skp')"><span class="icon">📋</span>SKP / RHK</a>
+<a href="#" onclick="showPage('evaluasi')"><span class="icon">⭐</span>Evaluasi Kinerja</a>
+<a href="#" onclick="showPage('lampiran')"><span class="icon">📎</span>Lampiran SKP</a>
+<a href="#" onclick="showPage('eviden')"><span class="icon">📁</span>Eviden</a>
+<a href="#" onclick="showPage('kuadran')"><span class="icon">📐</span>Kuadran & Distribusi</a>
+</nav>
+<div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
+</aside>
+<main class="main">
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+<h2 style="margin-bottom:20px;color:var(--primary)">Dashboard SKP 2026</h2>
+<div class="stats-grid">
+<div class="stat-card"><div class="num">26</div><div class="label">Total RHK</div></div>
+<div class="stat-card"><div class="num">4</div><div class="label">Triwulan</div></div>
+<div class="stat-card"><div class="num" id="dash-progress">0%</div><div class="label">Progress Realisasi</div></div>
+<div class="stat-card"><div class="num" id="dash-rating">-</div><div class="label">Predikat Kinerja</div></div>
+</div>
+<div class="card">
+<h3>Progress Per Triwulan</h3>
+<div id="tw-progress"></div>
+</div>
+<div class="card">
+<h3>Ringkasan RHK</h3>
+<table>
+<thead><tr><th>No</th><th>Rencana Hasil Kerja</th><th>Target</th><th>Realisasi</th><th>%</th></tr></thead>
+<tbody id="dash-rhk-table"></tbody>
+</table>
+</div>
+</div>
+<!-- IDENTITAS -->
+<div class="page" id="page-identitas">
+<h2 style="margin-bottom:20px;color:var(--primary)">Data Identitas</h2>
+<div class="card">
+<h3>PNS Yang Dinilai</h3>
+<div class="form-grid">
+<div class="form-group"><label>Nama</label><input id="id-nama" value="SUBARIYANTO, S.Pd, M.Pd.I."></div>
+<div class="form-group"><label>NIP</label><input id="id-nip" value="197002122005011004"></div>
+<div class="form-group"><label>Pangkat/Gol</label><input id="id-pangkat" value="Pembina Tingkat I, IV/b"></div>
+<div class="form-group"><label>Jabatan</label><input id="id-jabatan" value="Pengawas Madrasah Madya Tingkat Menengah Pada MA"></div>
+<div class="form-group"><label>Unit Kerja</label><input id="id-unit" value="Kantor Kementerian Agama Kab. Jember"></div>
+</div>
+</div>
+<div class="card">
+<h3>Pejabat Penilai Kinerja</h3>
+<div class="form-grid">
+<div class="form-group"><label>Nama</label><input id="pp-nama" value="Dr. SANTOSO, S.Ag, M.Pd."></div>
+<div class="form-group"><label>NIP</label><input id="pp-nip" value="196908251991031003"></div>
+<div class="form-group"><label>Pangkat/Gol</label><input id="pp-pangkat" value="Pembina Tingkat I, IV/b"></div>
+<div class="form-group"><label>Jabatan</label><input id="pp-jabatan" value="Kepala Kantor Kementerian Agama Kab. Jember"></div>
+<div class="form-group"><label>Unit Kerja</label><input id="pp-unit" value="Kantor Kementerian Agama Kab. Jember"></div>
+</div>
+</div>
+<div class="card">
+<h3>Atasan Pejabat Penilai</h3>
+<div class="form-grid">
+<div class="form-group"><label>Nama</label><input id="ap-nama" value="Dr. Akhmad Sruji Bahtiar, M.Pd.I."></div>
+<div class="form-group"><label>NIP</label><input id="ap-nip" value="197204122000031002"></div>
+<div class="form-group"><label>Pangkat/Gol</label><input id="ap-pangkat" value="Pembina Tingkat I, IV/b"></div>
+<div class="form-group"><label>Jabatan</label><input id="ap-jabatan" value="Kepala Kanwil Kemenag Prov. Jawa Timur"></div>
+<div class="form-group"><label>Unit Kerja</label><input id="ap-unit" value="Kanwil Kementerian Agama Prov. Jawa Timur"></div>
+</div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveIdentitas()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+<!-- SKP/RHK -->
+<div class="page" id="page-skp">
+<h2 style="margin-bottom:20px;color:var(--primary)">Sasaran Kinerja Pegawai - Rencana Hasil Kerja</h2>
+<div class="tw-tabs">
+<div class="tw-tab active" onclick="showTW(1)">Triwulan I</div>
+<div class="tw-tab" onclick="showTW(2)">Triwulan II</div>
+<div class="tw-tab" onclick="showTW(3)">Triwulan III</div>
+<div class="tw-tab" onclick="showTW(4)">Triwulan IV</div>
+</div>
+<div class="card"><div id="skp-table-container"></div></div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveSKP()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+<!-- EVALUASI -->
+<div class="page" id="page-evaluasi">
+<h2 style="margin-bottom:20px;color:var(--primary)">Evaluasi Kinerja</h2>
+<div class="tw-tabs">
+<div class="tw-tab active" onclick="showEvalTW(1)">Triwulan I</div>
+<div class="tw-tab" onclick="showEvalTW(2)">Triwulan II</div>
+<div class="tw-tab" onclick="showEvalTW(3)">Triwulan III</div>
+<div class="tw-tab" onclick="showEvalTW(4)">Triwulan IV</div>
+</div>
+<div class="card"><div id="eval-container"></div></div>
+<div class="card">
+<h3>Ringkasan Evaluasi</h3>
+<div id="eval-summary"></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveEval()">💾 Simpan</button>
+<button class="btn btn-success" onclick="hitungEval()">🔄 Hitung Nilai</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+<!-- LAMPIRAN -->
+<div class="page" id="page-lampiran">
+<h2 style="margin-bottom:20px;color:var(--primary)">Lampiran SKP</h2>
+<div class="card">
+<h3>Dukungan Sumber Daya</h3>
+<div class="form-group"><label>1.</label><textarea id="lamp-sd1">Dalam rangka memenuhi ekspektasi Pimpinan, diperlukan dukungan sumber daya berupa anggaran operasional, sarana transportasi, dan fasilitas teknologi informasi untuk pelaksanaan tugas pendampingan ke madrasah binaan.</textarea></div>
+<div class="form-group"><label>2.</label><textarea id="lamp-sd2">Koordinasi dan dukungan dari Madrasah Binaan dalam pelaksanaan kegiatan pendampingan Kepala Madrasah dan Guru.</textarea></div>
+</div>
+<div class="card">
+<h3>Skema Pertanggungjawaban</h3>
+<div class="form-group"><label>1.</label><textarea id="lamp-sp1">Hasil kerja dilaporkan setiap bulan berikut data yang dilaporkan adalah Dokumen Perencanaan Pendampingan.</textarea></div>
+<div class="form-group"><label>2.</label><textarea id="lamp-sp2">Dokumen Pelaksanaan Pendampingan terhadap Program Perencanaan Madrasah</textarea></div>
+<div class="form-group"><label>3.</label><textarea id="lamp-sp3">Dokumen Pendampingan Terhadap Pelaksanaan Program Kerja Madrasah</textarea></div>
+<div class="form-group"><label>4.</label><textarea id="lamp-sp4">Dokumen Pelaporan Pendampingan</textarea></div>
+</div>
+<div class="card">
+<h3>Konsekuensi</h3>
+<div class="form-group"><label>1.</label><textarea id="lamp-k1">Apabila memenuhi ekspektasi Pimpinan maka Penghargaan dalam bentuk reward atau promosi sesuai dengan ketentuan yang berlaku.</textarea></div>
+<div class="form-group"><label>2.</label><textarea id="lamp-k2">Apabila tidak memenuhi ekspektasi Pimpinan maka Adanya teguran lisan dan atau tertulis serta memenuhi ketentuan yang berlaku.</textarea></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveLampiran()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+<!-- EVIDEN -->
+<div class="page" id="page-eviden">
+<h2 style="margin-bottom:20px;color:var(--primary)">Eviden / Bukti Dukung</h2>
+<div class="tw-tabs">
+<div class="tw-tab active" onclick="showEvidenTW(1)">Triwulan I</div>
+<div class="tw-tab" onclick="showEvidenTW(2)">Triwulan II</div>
+<div class="tw-tab" onclick="showEvidenTW(3)">Triwulan III</div>
+<div class="tw-tab" onclick="showEvidenTW(4)">Triwulan IV</div>
+</div>
+<div class="card"><div id="eviden-container"></div></div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveEviden()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+<!-- KUADRAN -->
+<div class="page" id="page-kuadran">
+<h2 style="margin-bottom:20px;color:var(--primary)">Kuadran Kinerja & Pola Distribusi</h2>
+<div class="card">
+<h3>Kuadran Kinerja Pegawai</h3>
+<div class="kuadran-grid">
+<div class="kuadran-cell" style="background:#f39c12;color:#fff">Kuadran II<br><small>Perilaku Kerja: Di Atas Ekspektasi<br>Hasil Kerja: Di Bawah Ekspektasi</small></div>
+<div class="kuadran-cell" style="background:#27ae60;color:#fff">Kuadran I<br><small>Perilaku Kerja: Di Atas Ekspektasi<br>Hasil Kerja: Di Atas Ekspektasi</small></div>
+<div class="kuadran-cell" style="background:#e74c3c;color:#fff">Kuadran III<br><small>Perilaku Kerja: Di Bawah Ekspektasi<br>Hasil Kerja: Di Bawah Ekspektasi</small></div>
+<div class="kuadran-cell" style="background:#3498db;color:#fff">Kuadran IV<br><small>Perilaku Kerja: Di Bawah Ekspektasi<br>Hasil Kerja: Di Atas Ekspektasi</small></div>
+</div>
+<p style="text-align:center;margin-top:15px;font-size:13px"><strong>Posisi Anda: <span id="kuadran-pos" style="color:var(--secondary)">Belum dihitung</span></strong></p>
+</div>
+<div class="card">
+<h3>Pola Distribusi Predikat Kinerja</h3>
+<table>
+<thead><tr><th>Predikat</th><th>Rentang Nilai</th><th>Keterangan</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-sb">Sangat Baik</span></td><td>110 - 120</td><td>Hasil kerja sempurna, melampaui target</td></tr>
+<tr><td><span class="badge badge-b">Baik</span></td><td>90 - 109</td><td>Hasil kerja sesuai ekspektasi</td></tr>
+<tr><td><span class="badge badge-c">Cukup</span></td><td>70 - 89</td><td>Hasil kerja cukup memenuhi ekspektasi</td></tr>
+<tr><td><span class="badge badge-k">Kurang</span></td><td>50 - 69</td><td>Hasil kerja di bawah ekspektasi</td></tr>
+<tr><td><span class="badge badge-k">Sangat Kurang</span></td><td>&lt; 50</td><td>Hasil kerja jauh di bawah ekspektasi</td></tr>
+</tbody>
+</table>
+</div>
+<div class="btn-group">
+<button class="btn btn-success" onclick="hitungKuadran()">🔄 Hitung Kuadran</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+</div>
+</main>
+<script>
+// === DATA RHK ===
+const RHK_DATA = [
+{no:1,tw:1,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Tersusunnya Program Pendampingan Tahunan yang memprioritaskan layanan berpusat pada siswa",aspekK:"Jumlah dokumen program pendampingan tahunan yang disahkan",targetK:"1",aspekW:"Ketepatan waktu penyusunan program sesuai awal tahun anggaran",targetW:"1 Bulan",aksi:"Menyusun Program Pendampingan Tahunan",bukti:"Dokumen Program Pendampingan Tahunan",link:"https://drive.google.com/drive/folders/1T7i9i9V7saHFsrGIJYa2-IJn6p3j7EO3"},
+{no:2,tw:1,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya kualitas perangkat kurikulum madrasah binaan yang adaptif dan relevan",aspekK:"Persentase perangkat kurikulum yang dievaluasi dan dikembangkan",targetK:"82%",aspekW:"Pembinaan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melakukan evaluasi awal perangkat kurikulum madrasah binaan",bukti:"Dokumen Evaluasi Perangkat Kurikulum Madrasah",link:"https://drive.google.com/drive/folders/1rFcdjW6XGl32or0j4sXtqv7hJA90NpE7"},
+{no:3,tw:1,rhkAtasan:"RHK.4. Meningkatnya sarana dan prasarana satuan pendidikan",rhk:"Meningkatnya ketersediaan dan mutu layanan kesehatan sekolah pada madrasah binaan",aspekK:"Persentase madrasah binaan yang menyelenggarakan layanan kesehatan sekolah",targetK:"21%",aspekW:"Pendampingan dilaksanakan secara bertahap",targetW:"12 Bulan",aksi:"Melakukan identifikasi dan pemetaan kondisi layanan kesehatan sekolah",bukti:"Dokumen Identifikasi dan pemetaan kondisi layanan kesehatan sekolah",link:"https://drive.google.com/drive/folders/1Wf2wOEE9MFIuPjDrl1wYqnvhUUw3tHS6"},
+{no:4,tw:1,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya capaian literasi dan numerasi peserta didik madrasah binaan",aspekK:"Rata-rata nilai asesmen kompetensi literasi dan numerasi",targetK:"59.5% / 52%",aspekW:"Pembinaan dan evaluasi dilakukan sepanjang tahun",targetW:"12 Bulan",aksi:"Melakukan analisis awal data hasil asesmen literasi dan numerasi",bukti:"Dokumen analisis data hasil asesmen literasi dan numerasi",link:"https://drive.google.com/drive/folders/1ekvrWFUV_eJ39UldFy7NnLgtz-JA6XSQ"},
+{no:5,tw:1,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya kualitas perencanaan kerja tahunan madrasah binaan berbasis partisipasi",aspekK:"Persentase madrasah binaan yang menyusun rencana kerja tahunan berbasis partisipasi",targetK:"92%",aspekW:"Pembinaan dilaksanakan pada semester berjalan",targetW:"12 Bulan",aksi:"Melaksanakan pembinaan dan pendampingan penyusunan rencana kerja tahunan",bukti:"Laporan pembinaan dan pendampingan penyusunan RKTM",link:"https://drive.google.com/drive/folders/1ZeB92gdq0of0PWu_EJXScVh6cRlVfPFM"},
+{no:6,tw:1,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya implementasi pendidikan karakter dalam pembelajaran madrasah binaan",aspekK:"Persentase madrasah binaan yang mengintegrasikan pendidikan karakter",targetK:"100%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan integrasi pendidikan karakter dalam pembelajaran",bukti:"Laporan pendampingan integrasi pendidikan karakter",link:"https://drive.google.com/drive/folders/1qvVi_oKzLzCeALimZImKYPEk_YHdZJ-M"},
+{no:7,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terlaksananya kolaborasi dengan warga madrasah dan masyarakat untuk ekosistem pendidikan",aspekK:"Jumlah laporan pendampingan kolaboratif bersama Kepala Madrasah dan komite",targetK:"26%",aspekW:"Ketepatan jadwal pelaksanaan pertemuan koordinasi",targetW:"3 Bulan",aksi:"Melaksanakan koordinasi dan pendampingan kolaborasi",bukti:"Laporan koordinasi dan pendampingan kolaborasi",link:""},
+{no:8,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terwujudnya keterlibatan dalam jejaring profesi untuk diseminasi praktik baik",aspekK:"Jumlah sertifikat atau laporan keaktifan dalam organisasi profesi",targetK:"1",aspekW:"Kecepatan diseminasi informasi hasil jejaring",targetW:"6 Bulan",aksi:"Melaksanakan keaktifan dalam organisasi profesi dan jejaring pengawas",bukti:"Dokumen keaktifan dalam organisasi profesi",link:""},
+{no:9,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terlaksananya Pendampingan Penyusunan/Reviu KM yang mengintegrasikan Pembelajaran Mendalam",aspekK:"Jumlah laporan Pendampingan Penyusunan/Reviu KM",targetK:"82%",aspekW:"Ketepatan waktu pelaksanaan pendampingan",targetW:"3 Bulan",aksi:"Melaksanakan pendampingan penyusunan dan reviu Kurikulum Madrasah",bukti:"Laporan pendampingan penyusunan dan reviu Kurikulum Madrasah",link:""},
+{no:10,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya mutu layanan pendidikan melalui penguatan kegiatan kepramukaan",aspekK:"Persentase peningkatan nilai karakter melalui kepramukaan",targetK:"26%",aspekW:"Ketepatan waktu laporan",targetW:"3 Bulan",aksi:"Melaksanakan pembinaan penguatan pendidikan karakter melalui kepramukaan",bukti:"Laporan pembinaan penguatan pendidikan karakter",link:""},
+{no:11,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya kualitas perangkat kurikulum untuk mutu pendidikan",aspekK:"Persentase perangkat kurikulum yang direviu dan dikembangkan",targetK:"82%",aspekW:"Pembinaan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pembinaan pengembangan perangkat kurikulum",bukti:"Laporan pembinaan pengembangan perangkat kurikulum",link:""},
+{no:12,tw:2,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya mutu tata kelola melalui pemenuhan standar akreditasi",aspekK:"Persentase madrasah binaan yang memenuhi standar akreditasi",targetK:"49.2%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan pemenuhan standar akreditasi",bukti:"Laporan pendampingan pemenuhan standar akreditasi",link:""},
+{no:13,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terlaksananya pendampingan klinis dalam penerapan strategi Deep Learning",aspekK:"Jumlah madrasah binaan yang mendapatkan supervisi akademik berbasis pembelajaran mendalam",targetK:"1",aspekW:"Ketepatan waktu pemberian umpan balik",targetW:"3 Bulan",aksi:"Melaksanakan pendampingan klinis penerapan Pembelajaran Mendalam",bukti:"Laporan pendampingan klinis penerapan Pembelajaran Mendalam",link:""},
+{no:14,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Tersusunnya rekomendasi perbaikan mutu berdasarkan evaluasi kebijakan kurikulum",aspekK:"Jumlah dokumen laporan evaluasi implementasi kebijakan pendidikan",targetK:"1",aspekW:"Ketepatan waktu penyampaian rekomendasi",targetW:"3 Bulan",aksi:"Melaksanakan evaluasi implementasi kebijakan kurikulum",bukti:"Laporan evaluasi implementasi kebijakan kurikulum",link:""},
+{no:15,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya jumlah satuan pendidikan unggul",aspekK:"Persentase madrasah binaan yang menjadi satuan pendidikan unggul",targetK:"3.5%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan peningkatan mutu madrasah",bukti:"Laporan pendampingan peningkatan mutu",link:""},
+{no:16,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya implementasi pendidikan bilingual",aspekK:"Persentase madrasah yang menerapkan pendidikan bilingual",targetK:"0.42%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan implementasi pendidikan bilingual",bukti:"Laporan pendampingan pendidikan bilingual",link:""},
+{no:17,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya prestasi kompetisi nasional/internasional",aspekK:"Persentase peserta didik yang berprestasi di kompetisi",targetK:"0.55%",aspekW:"Pembinaan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pembinaan prestasi peserta didik",bukti:"Laporan pembinaan prestasi",link:""},
+{no:18,tw:3,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya guru yang memiliki sertifikat pendidik",aspekK:"Persentase guru yang memiliki sertifikat pendidik",targetK:"45.5%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan sertifikasi guru",bukti:"Laporan pendampingan sertifikasi",link:""},
+{no:19,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terlaksananya evaluasi dampak pendampingan",aspekK:"Jumlah dokumen evaluasi dampak",targetK:"1",aspekW:"Ketepatan waktu evaluasi",targetW:"3 Bulan",aksi:"Melaksanakan evaluasi dampak pendampingan",bukti:"Laporan evaluasi dampak pendampingan",link:""},
+{no:20,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Tersusunnya karya inovasi/Best Practice pengawasan",aspekK:"Jumlah karya inovasi/Best Practice",targetK:"1",aspekW:"Penyusunan dilaksanakan dalam 6 bulan",targetW:"6 Bulan",aksi:"Menyusun karya inovasi/Best Practice",bukti:"Dokumen karya inovasi/Best Practice",link:""},
+{no:21,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Terpenuhinya rasio guru terhadap siswa sesuai SNP",aspekK:"Rasio guru terhadap siswa",targetK:"1:12",aspekW:"Monitoring dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan monitoring rasio guru-siswa",bukti:"Laporan monitoring rasio guru-siswa",link:""},
+{no:22,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya kualifikasi tenaga kependidikan",aspekK:"Persentase tenaga kependidikan yang memenuhi kualifikasi",targetK:"41.5%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan peningkatan kualifikasi",bukti:"Laporan pendampingan kualifikasi",link:""},
+{no:23,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya guru agama yang memiliki sertifikat pendidik",aspekK:"Persentase guru agama bersertifikat pendidik",targetK:"91%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan sertifikasi guru agama",bukti:"Laporan pendampingan sertifikasi guru agama",link:""},
+{no:24,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya lulusan PPG",aspekK:"Persentase guru lulusan PPG",targetK:"45%",aspekW:"Pendampingan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pendampingan PPG",bukti:"Laporan pendampingan PPG",link:""},
+{no:25,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Meningkatnya prestasi ekstrakurikuler peserta didik",aspekK:"Jumlah prestasi ekstrakurikuler",targetK:"400",aspekW:"Pembinaan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Melaksanakan pembinaan ekstrakurikuler",bukti:"Laporan pembinaan ekstrakurikuler",link:""},
+{no:26,tw:4,rhkAtasan:"RHK.5. Meningkatnya layanan pendidikan yang berkualitas",rhk:"Tersusunnya rekomendasi pengadaan guru",aspekK:"Jumlah dokumen rekomendasi pengadaan guru",targetK:"1",aspekW:"Penyusunan dilaksanakan sepanjang tahun",targetW:"12 Bulan",aksi:"Menyusun rekomendasi pengadaan guru",bukti:"Dokumen rekomendasi pengadaan guru",link:""}
+];
+
+// === NAVIGATION ===
+function showPage(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById('page-'+id).classList.add('active');
+document.querySelectorAll('.sidebar nav a').forEach(a=>a.classList.remove('active'));
+event.target.closest('a').classList.add('active');
+document.querySelector('.sidebar').classList.remove('open');
+if(id==='dashboard')renderDashboard();
+if(id==='skp')showTW(1);
+if(id==='evaluasi')showEvalTW(1);
+if(id==='eviden')showEvidenTW(1);
+}
+
+// === DASHBOARD ===
+function renderDashboard(){
+let evalData=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let totalReal=0,totalTarget=0,count=0;
+RHK_DATA.forEach(r=>{
+let real=parseFloat(evalData['real-'+r.no])||0;
+let tgt=parseFloat(r.targetK)||0;
+if(tgt>0){totalReal+=real;totalTarget+=tgt;count++;}
+});
+let pct=totalTarget>0?Math.round((totalReal/totalTarget)*100):0;
+document.getElementById('dash-progress').textContent=pct+'%';
+let rating=pct>=110?'Sangat Baik':pct>=90?'Baik':pct>=70?'Cukup':pct>=50?'Kurang':'Sangat Kurang';
+document.getElementById('dash-rating').textContent=rating;
+// TW Progress
+let twHtml='';
+for(let tw=1;tw<=4;tw++){
+let twItems=RHK_DATA.filter(r=>r.tw===tw);
+let twReal=0,twTgt=0;
+twItems.forEach(r=>{
+let real=parseFloat(evalData['real-'+r.no])||0;
+let tgt=parseFloat(r.targetK)||0;
+if(tgt>0){twReal+=real;twTgt+=tgt;}
+});
+let twPct=twTgt>0?Math.round((twReal/twTgt)*100):0;
+let color=twPct>=90?'#27ae60':twPct>=70?'#f39c12':'#e74c3c';
+twHtml+='<div style="margin-bottom:12px"><strong>Triwulan '+tw+'</strong> (RHK '+(twItems[0].no)+'-'+(twItems[twItems.length-1].no)+')<div class="progress-bar"><div class="fill" style="width:'+Math.min(twPct,100)+'%;background:'+color+'">'+twPct+'%</div></div></div>';
+}
+document.getElementById('tw-progress').innerHTML=twHtml;
+// RHK Table
+let tbl='';
+RHK_DATA.forEach(r=>{
+let real=evalData['real-'+r.no]||'-';
+let tgt=r.targetK;
+let pctR=parseFloat(real)&&parseFloat(tgt)?Math.round((parseFloat(real)/parseFloat(tgt))*100):'-';
+tbl+='<tr><td>'+r.no+'</td><td>'+r.rhk.substring(0,80)+'...</td><td>'+tgt+'</td><td>'+real+'</td><td>'+pctR+(pctR!=='-'?'%':'')+'</td></tr>';
+});
+document.getElementById('dash-rhk-table').innerHTML=tbl;
+}
+
+// === SKP TABLE ===
+let currentTW=1;
+function showTW(tw){
+currentTW=tw;
+document.querySelectorAll('#page-skp .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
+let items=RHK_DATA.filter(r=>r.tw===tw);
+let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
+let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
+items.forEach(r=>{
+let linkVal=saved['link-'+r.no]||r.link;
+html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2"><input style="width:80px;font-size:10px" value="'+linkVal+'" onchange="saveLink('+r.no+',this.value)"></td></tr>';
+html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
+});
+html+='</tbody></table>';
+document.getElementById('skp-table-container').innerHTML=html;
+}
+function saveLink(no,val){let d=JSON.parse(localStorage.getItem('skp-rhk')||'{}');d['link-'+no]=val;localStorage.setItem('skp-rhk',JSON.stringify(d));}
+function saveSKP(){alert('Data SKP tersimpan!');}
+
+// === EVALUASI ===
+function showEvalTW(tw){
+document.querySelectorAll('#page-evaluasi .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
+let items=RHK_DATA.filter(r=>r.tw===tw);
+let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let html='<table><thead><tr><th>No</th><th>RHK</th><th>Target</th><th>Realisasi</th><th>Capaian %</th><th>Umpan Balik</th><th>Rating</th></tr></thead><tbody>';
+items.forEach(r=>{
+let real=saved['real-'+r.no]||'';
+let fb=saved['fb-'+r.no]||'';
+let pct=real&&parseFloat(r.targetK)?Math.round((parseFloat(real)/parseFloat(r.targetK))*100):0;
+let rat=pct>=110?'Sangat Baik':pct>=90?'Baik':pct>=70?'Cukup':pct>=50?'Kurang':pct>0?'Sangat Kurang':'-';
+let badge=rat==='Sangat Baik'?'badge-sb':rat==='Baik'?'badge-b':rat==='Cukup'?'badge-c':'badge-k';
+html+='<tr><td>'+r.no+'</td><td style="font-size:11px;max-width:200px">'+r.rhk+'</td><td>'+r.targetK+'</td>';
+html+='<td><input type="text" style="width:60px" value="'+real+'" onchange="saveEvalField('+r.no+',\'real\',this.value)"></td>';
+html+='<td>'+pct+'%</td>';
+html+='<td><input type="text" style="width:100px" value="'+fb+'" onchange="saveEvalField('+r.no+',\'fb\',this.value)"></td>';
+html+='<td><span class="badge '+badge+'">'+rat+'</span></td></tr>';
+});
+html+='</tbody></table>';
+document.getElementById('eval-container').innerHTML=html;
+renderEvalSummary();
+}
+function saveEvalField(no,field,val){let d=JSON.parse(localStorage.getItem('skp-eval')||'{}');d[field+'-'+no]=val;localStorage.setItem('skp-eval',JSON.stringify(d));showEvalTW(currentTW);}
+function saveEval(){localStorage.setItem('skp-eval',JSON.stringify(JSON.parse(localStorage.getItem('skp-eval')||'{}')));alert('Evaluasi tersimpan!');}
+function hitungEval(){showEvalTW(1);renderEvalSummary();alert('Evaluasi dihitung ulang!');}
+function renderEvalSummary(){
+let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let total=0,count=0;
+RHK_DATA.forEach(r=>{
+let real=parseFloat(saved['real-'+r.no])||0;
+let tgt=parseFloat(r.targetK)||0;
+if(real>0&&tgt>0){total+=(real/tgt)*100;count++;}
+});
+let avg=count>0?Math.round(total/count):0;
+let rat=avg>=110?'Sangat Baik':avg>=90?'Baik':avg>=70?'Cukup':avg>=50?'Kurang':'Sangat Kurang';
+document.getElementById('eval-summary').innerHTML='<p><strong>Rata-rata Capaian: '+avg+'%</strong></p><p>Predikat Kinerja: <span class="badge '+(rat==='Sangat Baik'?'badge-sb':rat==='Baik'?'badge-b':'badge-c')+'">'+rat+'</span></p>';
+}
+
+// === EVIDEN ===
+function showEvidenTW(tw){
+document.querySelectorAll('#page-eviden .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
+let items=RHK_DATA.filter(r=>r.tw===tw);
+let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
+let html='<table><thead><tr><th>No</th><th>RHK</th><th>Bukti Dukung</th><th>Link Eviden</th><th>Status</th></tr></thead><tbody>';
+items.forEach(r=>{
+let lnk=saved['evlink-'+r.no]||r.link||'';
+let status=lnk?'<span class="badge badge-sb">Ada</span>':'<span class="badge badge-k">Belum</span>';
+html+='<tr><td>'+r.no+'</td><td style="font-size:11px">'+r.rhk.substring(0,60)+'...</td><td style="font-size:11px">'+r.bukti+'</td>';
+html+='<td><input style="width:200px;font-size:11px" value="'+lnk+'" onchange="saveEvidenLink('+r.no+',this.value)" placeholder="Paste link eviden...">';
+if(lnk) html+=' <a href="'+lnk+'" target="_blank" class="eviden-link">Buka</a>';
+html+='</td><td>'+status+'</td></tr>';
+});
+html+='</tbody></table>';
+document.getElementById('eviden-container').innerHTML=html;
+}
+function saveEvidenLink(no,val){let d=JSON.parse(localStorage.getItem('skp-eviden')||'{}');d['evlink-'+no]=val;localStorage.setItem('skp-eviden',JSON.stringify(d));}
+function saveEviden(){alert('Data eviden tersimpan!');}
+
+// === LAMPIRAN ===
+function saveLampiran(){
+let data={sd1:document.getElementById('lamp-sd1').value,sd2:document.getElementById('lamp-sd2').value,sp1:document.getElementById('lamp-sp1').value,sp2:document.getElementById('lamp-sp2').value,sp3:document.getElementById('lamp-sp3').value,sp4:document.getElementById('lamp-sp4').value,k1:document.getElementById('lamp-k1').value,k2:document.getElementById('lamp-k2').value};
+localStorage.setItem('skp-lampiran',JSON.stringify(data));
+alert('Lampiran tersimpan!');
+}
+
+// === IDENTITAS ===
+function saveIdentitas(){
+let data={};
+['id-nama','id-nip','id-pangkat','id-jabatan','id-unit','pp-nama','pp-nip','pp-pangkat','pp-jabatan','pp-unit','ap-nama','ap-nip','ap-pangkat','ap-jabatan','ap-unit'].forEach(id=>{data[id]=document.getElementById(id).value;});
+localStorage.setItem('skp-identitas',JSON.stringify(data));
+alert('Data identitas tersimpan!');
+}
+function loadIdentitas(){
+let data=JSON.parse(localStorage.getItem('skp-identitas')||'null');
+if(data){Object.keys(data).forEach(id=>{let el=document.getElementById(id);if(el)el.value=data[id];});}
+}
+
+// === KUADRAN ===
+function hitungKuadran(){
+let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let total=0,count=0;
+RHK_DATA.forEach(r=>{
+let real=parseFloat(saved['real-'+r.no])||0;
+let tgt=parseFloat(r.targetK)||0;
+if(real>0&&tgt>0){total+=(real/tgt)*100;count++;}
+});
+let avg=count>0?Math.round(total/count):0;
+let pos=avg>=90?'Kuadran I (Di Atas Ekspektasi)':avg>=70?'Kuadran II':avg>=50?'Kuadran IV':'Kuadran III';
+document.getElementById('kuadran-pos').textContent=pos+' - Nilai: '+avg+'%';
+}
+
+// === INIT ===
+window.onload=function(){loadIdentitas();renderDashboard();};
+</script>
+</body>
+</html>
