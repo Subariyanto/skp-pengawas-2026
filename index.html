@@ -75,13 +75,13 @@ tr:nth-child(even){background:#f8f9fa}
 <aside class="sidebar">
 <h2>SKP PENGAWAS MADRASAH<br>POKJAWAS KEMENAG<br>KAB. JEMBER 2026</h2>
 <nav>
-<a href="#" class="active" onclick="showPage('dashboard')"><span class="icon">??</span>Dashboard</a>
-<a href="#" onclick="showPage('identitas')"><span class="icon">??</span>Data Identitas</a>
-<a href="#" onclick="showPage('skp')"><span class="icon">??</span>SKP / RHK</a>
-<a href="#" onclick="showPage('evaluasi')"><span class="icon">?</span>Evaluasi Kinerja</a>
-<a href="#" onclick="showPage('lampiran')"><span class="icon">??</span>Lampiran SKP</a>
-<a href="#" onclick="showPage('eviden')"><span class="icon">??</span>Eviden</a>
-<a href="#" onclick="showPage('kuadran')"><span class="icon">??</span>Kuadran & Distribusi</a>
+<a href="#" class="active" onclick="showPage('dashboard')"><span class="icon">&#128202;</span>Dashboard</a>
+<a href="#" onclick="showPage('identitas')"><span class="icon">&#128100;</span>Data Identitas</a>
+<a href="#" onclick="showPage('skp')"><span class="icon">&#128203;</span>SKP / RHK</a>
+<a href="#" onclick="showPage('evaluasi')"><span class="icon">&#128200;</span>Evaluasi Kinerja</a>
+<a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
+<a href="#" onclick="showPage('eviden')"><span class="icon">&#128206;</span>Eviden</a>
+<a href="#" onclick="showPage('kuadran')"><span class="icon">&#128208;</span>Kuadran & Distribusi</a>
 </nav>
 <div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
 </aside>
@@ -499,13 +499,18 @@ function showEvidenTW(tw){
 document.querySelectorAll('#page-eviden .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
 let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
-let html='<table><thead><tr><th>No</th><th>RHK</th><th>Bukti Dukung</th><th>Eviden</th><th>Status</th></tr></thead><tbody>';
+let html='<table><thead><tr><th>No</th><th>RHK</th><th>Bukti Dukung</th><th>Link Eviden</th><th>Status</th></tr></thead><tbody>';
 items.forEach(r=>{
 let links=getEvidenLinks(r.no);
 let count=links.length;
 let status=count>0?'<span class="badge badge-sb">'+count+' file</span>':'<span class="badge badge-k">Belum</span>';
-html+='<tr><td>'+r.no+'</td><td style="font-size:11px">'+r.rhk.substring(0,60)+'...</td><td style="font-size:11px">'+r.bukti+'</td>';
-html+='<td><button class="btn btn-primary" style="font-size:11px;padding:4px 10px" onclick="showEvidenDetail('+r.no+')">?? Lihat Eviden ('+count+')</button></td>';
+let linkHtml='';
+if(links.length>0){
+links.forEach((lnk,i)=>{linkHtml+='<div style="margin-bottom:4px"><a href="'+lnk.url+'" target="_blank" class="eviden-link" style="font-size:11px">&#128206; '+(lnk.nama||'Eviden '+(i+1))+'</a></div>';});
+}
+linkHtml+='<div style="margin-top:5px"><button style="font-size:10px;padding:2px 8px;background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer" onclick="showEvidenDetail('+r.no+')">+ Tambah</button></div>';
+html+='<tr><td>'+r.no+'</td><td style="font-size:11px;text-align:left">'+r.rhk.substring(0,60)+'...</td><td style="font-size:11px;text-align:left">'+r.bukti+'</td>';
+html+='<td style="text-align:left">'+linkHtml+'</td>';
 html+='<td>'+status+'</td></tr>';
 });
 html+='</tbody></table>';
