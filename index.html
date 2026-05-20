@@ -357,7 +357,16 @@ let editMode=false;
 
 function loadRHKFromStorage(){
 let custom=JSON.parse(localStorage.getItem('skp-rhk-data')||'null');
-if(custom){RHK_DATA.length=0;custom.forEach(r=>RHK_DATA.push(r));}
+if(custom){
+// Merge: keep custom edits but fill in missing links from defaults
+let defaults={};
+RHK_DATA.forEach(r=>{defaults[r.no]=r;});
+RHK_DATA.length=0;
+custom.forEach(r=>{
+if(!r.link && defaults[r.no] && defaults[r.no].link) r.link=defaults[r.no].link;
+RHK_DATA.push(r);
+});
+}
 }
 
 function showTW(tw){
@@ -368,8 +377,9 @@ let items=RHK_DATA.filter(r=>r.tw===tw);
 let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
 items.forEach(r=>{
-let linkVal=saved['link-'+r.no]||r.link;
-html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2"><input style="width:80px;font-size:10px" value="'+linkVal+'" onchange="saveLink('+r.no+',this.value)"></td></tr>';
+let linkVal=saved['link-'+r.no]||r.link||'';
+let linkHtml=linkVal?'<a href="'+linkVal+'" target="_blank" style="font-size:10px;color:#1a5276;font-weight:bold">📥 Download</a><br><input style="width:80px;font-size:9px;margin-top:3px" value="'+linkVal+'" onchange="saveLink('+r.no+',this.value)">':'<input style="width:80px;font-size:10px" value="" onchange="saveLink('+r.no+',this.value)" placeholder="Paste link...">';
+html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2">'+linkHtml+'</td></tr>';
 html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
 });
 html+='</tbody></table>';
