@@ -157,7 +157,23 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="card"><div id="skp-table-container"></div></div>
 <div class="btn-group">
 <button class="btn btn-primary" onclick="saveSKP()">💾 Simpan</button>
+<button class="btn btn-success" onclick="toggleEditSKP()">✏️ Edit RHK</button>
 <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+</div>
+<div id="edit-rhk-modal" style="display:none">
+<div class="card" style="border:2px solid var(--secondary)">
+<h3>✏️ Edit Data RHK</h3>
+<div class="form-grid">
+<div class="form-group"><label>Pilih RHK</label><select id="edit-rhk-select" onchange="loadEditRHK()"></select></div>
+</div>
+<div id="edit-rhk-fields"></div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="saveEditRHK()">💾 Simpan Perubahan</button>
+<button class="btn btn-success" onclick="addNewRHK()">➕ Tambah RHK Baru</button>
+<button class="btn btn-print" onclick="deleteRHK()" style="background:#e74c3c">🗑️ Hapus RHK</button>
+<button class="btn" onclick="toggleEditSKP()" style="background:#95a5a6;color:#fff">✖ Tutup</button>
+</div>
+</div>
 </div>
 </div>
 <!-- EVALUASI -->
@@ -337,8 +353,16 @@ document.getElementById('dash-rhk-table').innerHTML=tbl;
 
 // === SKP TABLE ===
 let currentTW=1;
+let editMode=false;
+
+function loadRHKFromStorage(){
+let custom=JSON.parse(localStorage.getItem('skp-rhk-data')||'null');
+if(custom){RHK_DATA.length=0;custom.forEach(r=>RHK_DATA.push(r));}
+}
+
 function showTW(tw){
 currentTW=tw;
+loadRHKFromStorage();
 document.querySelectorAll('#page-skp .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
 let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
@@ -353,6 +377,74 @@ document.getElementById('skp-table-container').innerHTML=html;
 }
 function saveLink(no,val){let d=JSON.parse(localStorage.getItem('skp-rhk')||'{}');d['link-'+no]=val;localStorage.setItem('skp-rhk',JSON.stringify(d));}
 function saveSKP(){alert('Data SKP tersimpan!');}
+
+// === EDIT RHK ===
+function toggleEditSKP(){
+let modal=document.getElementById('edit-rhk-modal');
+modal.style.display=modal.style.display==='none'?'block':'none';
+if(modal.style.display==='block')populateEditSelect();
+}
+function populateEditSelect(){
+let sel=document.getElementById('edit-rhk-select');
+sel.innerHTML='';
+RHK_DATA.forEach(r=>{
+let opt=document.createElement('option');
+opt.value=r.no;
+opt.textContent='RHK '+r.no+' (TW'+r.tw+') - '+r.rhk.substring(0,50)+'...';
+sel.appendChild(opt);
+});
+loadEditRHK();
+}
+function loadEditRHK(){
+let no=parseInt(document.getElementById('edit-rhk-select').value);
+let r=RHK_DATA.find(x=>x.no===no);
+if(!r)return;
+let html='<div class="form-grid">';
+html+='<div class="form-group"><label>No</label><input id="edt-no" type="number" value="'+r.no+'"></div>';
+html+='<div class="form-group"><label>Triwulan</label><select id="edt-tw"><option value="1"'+(r.tw===1?' selected':'')+'>I</option><option value="2"'+(r.tw===2?' selected':'')+'>II</option><option value="3"'+(r.tw===3?' selected':'')+'>III</option><option value="4"'+(r.tw===4?' selected':'')+'>IV</option></select></div>';
+html+='<div class="form-group"><label>RHK Atasan yang Diintervensi</label><textarea id="edt-rhkAtasan" rows="2">'+r.rhkAtasan+'</textarea></div>';
+html+='<div class="form-group"><label>Rencana Hasil Kerja</label><textarea id="edt-rhk" rows="3">'+r.rhk+'</textarea></div>';
+html+='<div class="form-group"><label>IKI Kuantitas</label><textarea id="edt-aspekK" rows="2">'+r.aspekK+'</textarea></div>';
+html+='<div class="form-group"><label>Target Kuantitas</label><input id="edt-targetK" value="'+r.targetK+'"></div>';
+html+='<div class="form-group"><label>IKI Waktu</label><textarea id="edt-aspekW" rows="2">'+r.aspekW+'</textarea></div>';
+html+='<div class="form-group"><label>Target Waktu</label><input id="edt-targetW" value="'+r.targetW+'"></div>';
+html+='<div class="form-group"><label>Rencana Aksi</label><textarea id="edt-aksi" rows="2">'+r.aksi+'</textarea></div>';
+html+='<div class="form-group"><label>Bukti Dukung</label><input id="edt-bukti" value="'+r.bukti+'"></div>';
+html+='<div class="form-group"><label>Link Eviden</label><input id="edt-link" value="'+(r.link||'')+'"></div>';
+html+='</div>';
+document.getElementById('edit-rhk-fields').innerHTML=html;
+}
+function saveEditRHK(){
+let selNo=parseInt(document.getElementById('edit-rhk-select').value);
+let idx=RHK_DATA.findIndex(x=>x.no===selNo);
+if(idx===-1)return;
+RHK_DATA[idx]={no:parseInt(document.getElementById('edt-no').value),tw:parseInt(document.getElementById('edt-tw').value),rhkAtasan:document.getElementById('edt-rhkAtasan').value,rhk:document.getElementById('edt-rhk').value,aspekK:document.getElementById('edt-aspekK').value,targetK:document.getElementById('edt-targetK').value,aspekW:document.getElementById('edt-aspekW').value,targetW:document.getElementById('edt-targetW').value,aksi:document.getElementById('edt-aksi').value,bukti:document.getElementById('edt-bukti').value,link:document.getElementById('edt-link').value};
+localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+showTW(currentTW);
+populateEditSelect();
+alert('RHK '+selNo+' berhasil diupdate!');
+}
+function addNewRHK(){
+let maxNo=Math.max(...RHK_DATA.map(r=>r.no));
+let newRHK={no:maxNo+1,tw:currentTW,rhkAtasan:'[Isi RHK Atasan]',rhk:'[Isi Rencana Hasil Kerja Baru]',aspekK:'[Isi IKI Kuantitas]',targetK:'0',aspekW:'[Isi IKI Waktu]',targetW:'12 Bulan',aksi:'[Isi Rencana Aksi]',bukti:'[Isi Bukti Dukung]',link:''};
+RHK_DATA.push(newRHK);
+localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+showTW(currentTW);
+populateEditSelect();
+document.getElementById('edit-rhk-select').value=newRHK.no;
+loadEditRHK();
+alert('RHK baru ditambahkan! Silakan edit isinya.');
+}
+function deleteRHK(){
+let selNo=parseInt(document.getElementById('edit-rhk-select').value);
+if(!confirm('Yakin hapus RHK '+selNo+'?'))return;
+let idx=RHK_DATA.findIndex(x=>x.no===selNo);
+if(idx>-1)RHK_DATA.splice(idx,1);
+localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+showTW(currentTW);
+populateEditSelect();
+alert('RHK '+selNo+' dihapus.');
+}
 
 // === EVALUASI ===
 function showEvalTW(tw){
@@ -446,7 +538,7 @@ document.getElementById('kuadran-pos').textContent=pos+' - Nilai: '+avg+'%';
 }
 
 // === INIT ===
-window.onload=function(){loadIdentitas();renderDashboard();};
+window.onload=function(){loadRHKFromStorage();loadIdentitas();renderDashboard();};
 </script>
 </body>
 </html>
