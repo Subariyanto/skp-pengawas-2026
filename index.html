@@ -81,6 +81,7 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('evaluasi')"><span class="icon">&#128200;</span>Evaluasi Kinerja</a>
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
 <a href="#" onclick="showPage('eviden')"><span class="icon">&#128206;</span>Eviden</a>
+<a href="#" onclick="showPage('madrasah')"><span class="icon">&#127979;</span>Data Madrasah</a>
 <a href="#" onclick="showPage('kuadran')"><span class="icon">&#128208;</span>Kuadran & Distribusi</a>
 </nav>
 <div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
@@ -236,6 +237,37 @@ tr:nth-child(even){background:#f8f9fa}
 <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
+<!-- DATA MADRASAH -->
+<div class="page" id="page-madrasah">
+<h2 style="margin-bottom:20px;color:var(--primary)">Data Madrasah Dampingan</h2>
+<div class="card">
+<h3>Daftar Madrasah Binaan</h3>
+<div class="btn-group">
+<button class="btn btn-success" onclick="showAddMadrasah()">&#10133; Tambah Data</button>
+</div>
+<div id="add-madrasah-form" style="display:none;margin-bottom:15px;padding:15px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac">
+<h4 style="margin-bottom:10px;color:var(--secondary)">Tambah Madrasah Baru</h4>
+<div class="form-grid">
+<div class="form-group"><label>Nama Madrasah</label><input id="md-nama"></div>
+<div class="form-group"><label>Nama Kepala Madrasah</label><input id="md-kepsek"></div>
+<div class="form-group"><label>No. HP</label><input id="md-hp"></div>
+<div class="form-group"><label>NSM</label><input id="md-nsm"></div>
+<div class="form-group"><label>NPSN</label><input id="md-npsn"></div>
+<div class="form-group"><label>Alamat</label><input id="md-alamat"></div>
+<div class="form-group"><label>Desa</label><input id="md-desa"></div>
+<div class="form-group"><label>Kecamatan</label><input id="md-kec"></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="simpanMadrasah()">&#128190; Simpan</button>
+<button class="btn" style="background:#95a5a6;color:#fff" onclick="document.getElementById('add-madrasah-form').style.display='none'">Batal</button>
+</div>
+</div>
+<table id="tbl-madrasah">
+<thead><tr><th>No</th><th>Nama Madrasah</th><th>Kepala Madrasah</th><th>No. HP</th><th>NSM</th><th>NPSN</th><th>Alamat</th><th>Desa</th><th>Kecamatan</th><th>Aksi</th></tr></thead>
+<tbody id="tbody-madrasah"></tbody>
+</table>
+</div>
+</div>
 <!-- KUADRAN -->
 <div class="page" id="page-kuadran">
 <h2 style="margin-bottom:20px;color:var(--primary)">Kuadran Kinerja & Pola Distribusi</h2>
@@ -310,6 +342,7 @@ if(id==='dashboard')renderDashboard();
 if(id==='skp')showTW(1);
 if(id==='evaluasi')showEvalTW(1);
 if(id==='eviden')showEvidenTW(1);
+if(id==='madrasah')renderMadrasah();
 }
 
 // === DASHBOARD ===
@@ -378,7 +411,7 @@ let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
 items.forEach(r=>{
 let linkVal=saved['link-'+r.no]||r.link||'';
-let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal?'pointer':'text')+'" value="'+(linkVal||'')+'" onchange="saveLink('+r.no+',this.value)" ondblclick="if(this.value)window.open(this.value,\''+'_blank\''+')"  placeholder="Paste link..." '+(linkVal?'readonly':'')+'>'; 
+let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal?'pointer':'text')+'" value="'+(linkVal||'')+'" onchange="saveLink('+r.no+',this.value)" onclick="if(this.value)window.open(this.value,\''+'_blank\''+')"  placeholder="Paste link..." '+(linkVal?'readonly':'')+'>'; 
 html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2" style="min-width:160px">'+linkHtml+'</td></tr>';
 html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
 });
@@ -505,7 +538,7 @@ let links=getEvidenLinks(r.no);
 let count=links.length;
 let status=count>0?'<span class="badge badge-sb">'+count+' file</span>':'<span class="badge badge-k">Belum</span>';
 let linkVal2=saved['link-'+r.no]||r.link||'';
-let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal2?'pointer':'text')+'" value="'+(linkVal2||'')+'" onchange="saveEvidenLink('+r.no+',this.value)" ondblclick="if(this.value)window.open(this.value,\'_blank\')" placeholder="Paste link..." '+(linkVal2?'readonly':'')+'>';
+let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal2?'pointer':'text')+'" value="'+(linkVal2||'')+'" onchange="saveEvidenLink('+r.no+',this.value)" onclick="if(this.value)window.open(this.value,\'_blank\')" placeholder="Paste link..." '+(linkVal2?'readonly':'')+'>';
 html+='<tr><td>'+r.no+'</td><td style="font-size:11px;text-align:left">'+r.rhk.substring(0,60)+'...</td><td style="font-size:11px;text-align:left">'+r.bukti+'</td>';
 html+='<td style="text-align:left;min-width:160px">'+linkHtml+'</td>';
 html+='<td>'+status+'</td></tr>';
@@ -624,8 +657,67 @@ let pos=avg>=90?'Kuadran I (Di Atas Ekspektasi)':avg>=70?'Kuadran II':avg>=50?'K
 document.getElementById('kuadran-pos').textContent=pos+' - Nilai: '+avg+'%';
 }
 
+// === DATA MADRASAH ===
+const MADRASAH_DEFAULT=[
+{nama:"MAS AL - BADRI",kepsek:"Saifuddin, S.Pd.I",hp:"085321738186",nsm:"131235090019",npsn:"20580249",alamat:"Jl. Kalisat Arjasa No. 50 Dusun Krajan",desa:"Gumuksari",kec:"Kalisat"},
+{nama:"MAS AL MUBAROK",kepsek:"Yuliana Anggraeni",hp:"083830761873",nsm:"131235090020",npsn:"20580256",alamat:"Jalan Imam Bonjol. No. 11",desa:"Glagahwero",kec:"Kalisat"},
+{nama:"MAS MIFTAHUL ULUM KALISAT",kepsek:"ISFANDIAR",hp:"081234816604",nsm:"131235090021",npsn:"20580298",alamat:"Jl. Pesantren No. 117",desa:"Glagahwero",kec:"Kalisat"},
+{nama:"MAS BAHRUL AMIN AL KHOLILI",kepsek:"Ifrohatul Hasanah, S. Pd",hp:"083847779806",nsm:"131235090114",npsn:"20596561",alamat:"Jl. PB. Sudirman RT. 05 RW. 04",desa:"Plalangan",kec:"Kalisat"},
+{nama:"MAS NURUL ALI",kepsek:"Halik, S.Pd.I",hp:"081230418860",nsm:"131235090027",npsn:"20580304",alamat:"Jl. Bringin No.12 Ledokombo",desa:"Sumberbulus",kec:"Ledokombo"},
+{nama:"MAS MIFTAHUL ULUM SUREN",kepsek:"Muhammad Hazin Mudzhar, S.Hum",hp:"087765990525",nsm:"131235090028",npsn:"20580300",alamat:"Jl. Cendrawasih 17 Suren",desa:"Suren",kec:"Ledokombo"},
+{nama:"MAS AT-TAQWA",kepsek:"Dr. Mohammad Erwan, S.Pd, M.Pd",hp:"082317334706",nsm:"131235090066",npsn:"20580266",alamat:"DSN. KRAJAN DESA SUREN LEDOKOMBO",desa:"Suren",kec:"Ledokombo"},
+{nama:"MAS AR - ROHMAH",kepsek:"Ali Rachamtulloh, S.Pd",hp:"082335118952",nsm:"131235090072",npsn:"60728115",alamat:"JL. KH SANHAJI NO.57 LEDOKOMBO",desa:"Suren",kec:"Ledokombo"},
+{nama:"MAS RAUDLATUL ULUM",kepsek:"NUR FARIDZAH, S.Kg",hp:"081334139010",nsm:"131235090081",npsn:"69788053",alamat:"JL. CUMEDAK N0 76 LEDOKOMBO",desa:"Ledokombo",kec:"Ledokombo"},
+{nama:"MAS KEPENDIDIKAN NURURRAHMAN",kepsek:"Abdullah, S.Pd.I, M.Pd.",hp:"081334571883",nsm:"131235090086",npsn:"69894851",alamat:"Jl. Pemancar Telkom No.08 Prasean - Pakusari",desa:"Jatian",kec:"Pakusari"},
+{nama:"MAS HABIBURROHMAN",kepsek:"Ahmad Zaini, S.Pd.I, M.Pd",hp:"0882010525871",nsm:"131235090094",npsn:"69894852",alamat:"Jl. Dsn Plalangan Desa Jatian",desa:"Jatian",kec:"Pakusari"},
+{nama:"MAS NURUL QARNAIN",kepsek:"Drs. H. IMAM SYAFI'I, M.Pd.I",hp:"081311170967",nsm:"131235090049",npsn:"20580308",alamat:"Jl. Imam Sukarto No.60",desa:"Baletbaru",kec:"Sukowono"},
+{nama:"MAS MIFTAHUL ULUM",kepsek:"LUTFI GHUFRON, S.Pd.I",hp:"082257856293",nsm:"131235090093",npsn:"69894854",alamat:"Jl. Keramat 01 Desa Arjasa Kecamatan Sukowono",desa:"Arjasa",kec:"Sukowono"},
+{nama:"MAS RAUDLATUS SYABAB",kepsek:"H. Badrudin, S.Pd.I, M.Pd",hp:"085257672216",nsm:"131235090097",npsn:"69894855",alamat:"Jl. KH Ahmad Syukri No.2 Sumber Wringin - Sukowono",desa:"Sumberwringin",kec:"Sukowono"},
+{nama:"MAS NURUL ISLAM AL-HAMIDY",kepsek:"Musthofa, S.Pd.I, M.Pd",hp:"082335147163",nsm:"131235090053",npsn:"20580306",alamat:"JL. KH. ABD. HAMID NO. 01",desa:"Jambearum",kec:"Sumberjambe"},
+{nama:"MAS BAITUL AZHAR",kepsek:"MOCHAMMAD ISWANTO, S.Pd",hp:"085230792946",nsm:"131235090054",npsn:"20580270",alamat:"Jl. Karang Duren No.20 Sumberpakem -Sumberjambe",desa:"Sumberpakem",kec:"Sumberjambe"},
+{nama:"MAS NURUL IMAM",kepsek:"RIZQY FEBRI PUJI LESTARI, S.Pd",hp:"085231092837",nsm:"131235090091",npsn:"69881456",alamat:"Jl. Sukosari Randuagung Sumberjambe",desa:"Cumedak",kec:"Sumberjambe"},
+{nama:"MAS PLUS AL MAHFUDZ",kepsek:"M.Ainul Fata Al Kiromi, S.H, M.Pd.I",hp:"082221046105",nsm:"131235090105",npsn:"20595872",alamat:"Jl. Gunung Raung No. 01 Desa Pringgondani Kecamatan Sumberjambe",desa:"Pringgondani",kec:"Sumberjambe"}
+];
+function getMadrasahData(){
+let saved=JSON.parse(localStorage.getItem('skp-madrasah')||'null');
+return saved||MADRASAH_DEFAULT.slice();
+}
+function saveMadrasahData(data){
+localStorage.setItem('skp-madrasah',JSON.stringify(data));
+}
+function renderMadrasah(){
+let data=getMadrasahData();
+let html='';
+data.forEach((m,i)=>{
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+m.nama+'</td><td style="font-size:11px">'+m.kepsek+'</td><td style="font-size:11px">'+m.hp+'</td><td style="font-size:11px">'+m.nsm+'</td><td style="font-size:11px">'+m.npsn+'</td><td style="font-size:11px">'+m.alamat+'</td><td style="font-size:11px">'+m.desa+'</td><td style="font-size:11px">'+m.kec+'</td>';
+html+='<td><button class="btn" style="background:#e74c3c;color:#fff;font-size:10px;padding:4px 8px" onclick="hapusMadrasah('+i+')">Hapus</button></td></tr>';
+});
+document.getElementById('tbody-madrasah').innerHTML=html;
+}
+function showAddMadrasah(){
+document.getElementById('add-madrasah-form').style.display='block';
+['md-nama','md-kepsek','md-hp','md-nsm','md-npsn','md-alamat','md-desa','md-kec'].forEach(id=>{document.getElementById(id).value='';});
+}
+function simpanMadrasah(){
+let m={nama:document.getElementById('md-nama').value,kepsek:document.getElementById('md-kepsek').value,hp:document.getElementById('md-hp').value,nsm:document.getElementById('md-nsm').value,npsn:document.getElementById('md-npsn').value,alamat:document.getElementById('md-alamat').value,desa:document.getElementById('md-desa').value,kec:document.getElementById('md-kec').value};
+if(!m.nama){alert('Nama Madrasah wajib diisi');return;}
+let data=getMadrasahData();
+data.push(m);
+saveMadrasahData(data);
+document.getElementById('add-madrasah-form').style.display='none';
+renderMadrasah();
+alert('Data madrasah berhasil ditambahkan!');
+}
+function hapusMadrasah(idx){
+if(!confirm('Hapus data madrasah ini?'))return;
+let data=getMadrasahData();
+data.splice(idx,1);
+saveMadrasahData(data);
+renderMadrasah();
+}
+
 // === INIT ===
-window.onload=function(){loadRHKFromStorage();loadIdentitas();renderDashboard();};
+window.onload=function(){loadRHKFromStorage();loadIdentitas();renderDashboard();renderMadrasah();};
 </script>
 </body>
 </html>
