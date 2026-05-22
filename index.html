@@ -141,8 +141,8 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 </div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveIdentitas()">?? Simpan</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-primary" onclick="saveIdentitas()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
 <!-- SKP/RHK -->
@@ -156,22 +156,22 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 <div class="card"><div id="skp-table-container"></div></div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveSKP()">?? Simpan</button>
-<button class="btn btn-success" onclick="toggleEditSKP()">?? Edit RHK</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-primary" onclick="saveSKP()">💾 Simpan</button>
+<button class="btn btn-success" onclick="toggleEditSKP()">✏️ Edit RHK</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 <div id="edit-rhk-modal" style="display:none">
 <div class="card" style="border:2px solid var(--secondary)">
-<h3>?? Edit Data RHK</h3>
+<h3>✏️ Edit Data RHK</h3>
 <div class="form-grid">
 <div class="form-group"><label>Pilih RHK</label><select id="edit-rhk-select" onchange="loadEditRHK()"></select></div>
 </div>
 <div id="edit-rhk-fields"></div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveEditRHK()">?? Simpan Perubahan</button>
-<button class="btn btn-success" onclick="addNewRHK()">? Tambah RHK Baru</button>
-<button class="btn btn-print" onclick="deleteRHK()" style="background:#e74c3c">??? Hapus RHK</button>
-<button class="btn" onclick="toggleEditSKP()" style="background:#95a5a6;color:#fff">? Tutup</button>
+<button class="btn btn-primary" onclick="saveEditRHK()">💾 Simpan Perubahan</button>
+<button class="btn btn-success" onclick="addNewRHK()">➕ Tambah RHK Baru</button>
+<button class="btn btn-print" onclick="deleteRHK()" style="background:#e74c3c">🗑️ Hapus RHK</button>
+<button class="btn" onclick="toggleEditSKP()" style="background:#95a5a6;color:#fff">✖ Tutup</button>
 </div>
 </div>
 </div>
@@ -191,9 +191,9 @@ tr:nth-child(even){background:#f8f9fa}
 <div id="eval-summary"></div>
 </div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveEval()">?? Simpan</button>
-<button class="btn btn-success" onclick="hitungEval()">?? Hitung Nilai</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-primary" onclick="saveEval()">💾 Simpan</button>
+<button class="btn btn-success" onclick="hitungEval()">📊 Hitung Nilai</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
 <!-- LAMPIRAN -->
@@ -217,8 +217,8 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="form-group"><label>2.</label><textarea id="lamp-k2">Apabila tidak memenuhi ekspektasi Pimpinan maka Adanya teguran lisan dan atau tertulis serta memenuhi ketentuan yang berlaku.</textarea></div>
 </div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveLampiran()">?? Simpan</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-primary" onclick="saveLampiran()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
 <!-- EVIDEN -->
@@ -232,8 +232,8 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 <div class="card"><div id="eviden-container"></div></div>
 <div class="btn-group">
-<button class="btn btn-primary" onclick="saveEviden()">?? Simpan</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-primary" onclick="saveEviden()">💾 Simpan</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
 <!-- KUADRAN -->
@@ -263,8 +263,8 @@ tr:nth-child(even){background:#f8f9fa}
 </table>
 </div>
 <div class="btn-group">
-<button class="btn btn-success" onclick="hitungKuadran()">?? Hitung Kuadran</button>
-<button class="btn btn-print" onclick="window.print()">??? Cetak</button>
+<button class="btn btn-success" onclick="hitungKuadran()">📊 Hitung Kuadran</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
 </div>
 </div>
 </main>
@@ -378,7 +378,7 @@ let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
 items.forEach(r=>{
 let linkVal=saved['link-'+r.no]||r.link||'';
-let linkHtml=linkVal?'<a href="'+linkVal+'" target="_blank" style="font-size:10px;color:#1a5276;font-weight:bold">?? Download</a><br><input style="width:80px;font-size:9px;margin-top:3px" value="'+linkVal+'" onchange="saveLink('+r.no+',this.value)">':'<input style="width:80px;font-size:10px" value="" onchange="saveLink('+r.no+',this.value)" placeholder="Paste link...">';
+let linkHtml=linkVal?'<a href="'+linkVal+'" target="_blank" style="font-size:10px;color:#1a5276;font-weight:bold">📎 Download</a><br><input style="width:80px;font-size:9px;margin-top:3px" value="'+linkVal+'" onchange="saveLink('+r.no+',this.value)">':'<input style="width:80px;font-size:10px" value="" onchange="saveLink('+r.no+',this.value)" placeholder="Paste link...">';
 html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2">'+linkHtml+'</td></tr>';
 html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
 });
@@ -532,18 +532,18 @@ html+='<h3 style="margin-bottom:5px;color:#1a5276">RHK '+no+'</h3>';
 html+='<p style="font-size:13px;color:#555;margin-bottom:15px">'+r.rhk+'</p>';
 html+='<p style="font-size:12px;margin-bottom:10px"><b>Bukti Dukung:</b> '+r.bukti+'</p>';
 html+='<hr style="margin:15px 0">';
-html+='<h4 style="margin-bottom:10px">?? Daftar Eviden ('+links.length+' file)</h4>';
+html+='<h4 style="margin-bottom:10px">📎 Daftar Eviden ('+links.length+' file)</h4>';
 if(links.length>0){
 html+='<ul style="list-style:none;padding:0">';
 links.forEach((lnk,i)=>{
 let isGdrive=lnk.url&&lnk.url.includes('drive.google.com');
 let previewUrl=isGdrive?lnk.url:lnk.url;
 html+='<li style="padding:10px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">';
-html+='<div style="flex:1"><div style="font-weight:600;font-size:12px">?? '+(lnk.nama||'Eviden '+(i+1))+'</div>';
+html+='<div style="flex:1"><div style="font-weight:600;font-size:12px">📄 '+(lnk.nama||'Eviden '+(i+1))+'</div>';
 html+='<div style="font-size:10px;color:#888;margin-top:3px;word-break:break-all">'+lnk.url.substring(0,60)+'...</div></div>';
 html+='<div style="display:flex;gap:5px">';
-html+='<a href="'+previewUrl+'" target="_blank" style="background:#0ea5e9;color:#fff;padding:5px 10px;border-radius:5px;text-decoration:none;font-size:11px;font-weight:600">?? Lihat</a>';
-html+='<button onclick="removeEvidenFile('+no+','+i+')" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:5px;border:none;cursor:pointer;font-size:11px">??</button>';
+html+='<a href="'+previewUrl+'" target="_blank" style="background:#0ea5e9;color:#fff;padding:5px 10px;border-radius:5px;text-decoration:none;font-size:11px;font-weight:600">👁 Lihat</a>';
+html+='<button onclick="removeEvidenFile('+no+','+i+')" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:5px;border:none;cursor:pointer;font-size:11px">🗑</button>';
 html+='</div></li>';
 });
 html+='</ul>';
