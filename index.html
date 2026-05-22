@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SKP Pengawas Madrasah 2026</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#1a5276;--secondary:#148f77;--accent:#2ecc71;--bg:#f4f6f9;--card:#fff;--text:#2c3e50;--border:#ddd;--sidebar-w:260px}
@@ -75,6 +76,7 @@ tr:nth-child(even){background:#f8f9fa}
 <aside class="sidebar">
 <h2>SKP PENGAWAS MADRASAH<br>POKJAWAS KEMENAG<br>KAB. JEMBER 2026</h2>
 <nav>
+<a href="#" onclick="showPage('periode')"><span class="icon">&#128197;</span>Periode</a>
 <a href="#" class="active" onclick="showPage('dashboard')"><span class="icon">&#128202;</span>Dashboard</a>
 <a href="#" onclick="showPage('identitas')"><span class="icon">&#128100;</span>Data Identitas</a>
 <a href="#" onclick="showPage('skp')"><span class="icon">&#128203;</span>SKP / RHK</a>
@@ -87,6 +89,27 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
 </aside>
 <main class="main">
+<!-- PERIODE -->
+<div class="page" id="page-periode">
+<h2 style="margin-bottom:20px;color:var(--primary)">Periode Tahun</h2>
+<div class="card">
+<h3>Periode Aktif</h3>
+<p style="margin-bottom:15px">Periode aktif saat ini: <strong id="periode-aktif-label">2026</strong></p>
+<div class="form-group" style="max-width:300px">
+<label>Pilih Periode</label>
+<select id="periode-select" onchange="switchPeriode(this.value)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px"></select>
+</div>
+</div>
+<div class="card">
+<h3>Tambah Periode Baru</h3>
+<div class="form-grid">
+<div class="form-group"><label>Tahun</label><input id="periode-tahun-baru" type="number" min="2020" max="2099" placeholder="Contoh: 2027"></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="tambahPeriode()">&#10133; Tambah Periode</button>
+</div>
+</div>
+</div>
 <!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
 <h2 style="margin-bottom:20px;color:var(--primary)">Dashboard SKP 2026</h2>
@@ -244,9 +267,11 @@ tr:nth-child(even){background:#f8f9fa}
 <h3>Daftar Madrasah Binaan</h3>
 <div class="btn-group">
 <button class="btn btn-success" onclick="showAddMadrasah()">&#10133; Tambah Data</button>
+<button class="btn btn-primary" onclick="importExcelMadrasah()">📥 Import Excel</button>
+<input type="file" id="excel-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelFile(event)">
 </div>
 <div id="add-madrasah-form" style="display:none;margin-bottom:15px;padding:15px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac">
-<h4 style="margin-bottom:10px;color:var(--secondary)">Tambah Madrasah Baru</h4>
+<h4 style="margin-bottom:10px;color:var(--secondary)" id="form-madrasah-title">Tambah Madrasah Baru</h4>
 <div class="form-grid">
 <div class="form-group"><label>Nama Madrasah</label><input id="md-nama"></div>
 <div class="form-group"><label>Nama Kepala Madrasah</label><input id="md-kepsek"></div>
@@ -259,7 +284,7 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 <div class="btn-group">
 <button class="btn btn-primary" onclick="simpanMadrasah()">&#128190; Simpan</button>
-<button class="btn" style="background:#95a5a6;color:#fff" onclick="document.getElementById('add-madrasah-form').style.display='none'">Batal</button>
+<button class="btn" style="background:#95a5a6;color:#fff" onclick="batalMadrasah()">Batal</button>
 </div>
 </div>
 <table id="tbl-madrasah">
@@ -343,11 +368,12 @@ if(id==='skp')showTW(1);
 if(id==='evaluasi')showEvalTW(1);
 if(id==='eviden')showEvidenTW(1);
 if(id==='madrasah')renderMadrasah();
+if(id==='periode')renderPeriodePage();
 }
 
 // === DASHBOARD ===
 function renderDashboard(){
-let evalData=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let evalData=JSON.parse(localStorage.getItem(getKey('eval'))||'{}');
 let totalReal=0,totalTarget=0,count=0;
 RHK_DATA.forEach(r=>{
 let real=parseFloat(evalData['real-'+r.no])||0;
@@ -389,7 +415,7 @@ let currentTW=1;
 let editMode=false;
 
 function loadRHKFromStorage(){
-let custom=JSON.parse(localStorage.getItem('skp-rhk-data')||'null');
+let custom=JSON.parse(localStorage.getItem(getKey('rhk'))||'null');
 if(custom){
 // Merge: keep custom edits but fill in missing links from defaults
 let defaults={};
@@ -407,7 +433,7 @@ currentTW=tw;
 loadRHKFromStorage();
 document.querySelectorAll('#page-skp .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
-let saved=JSON.parse(localStorage.getItem('skp-rhk')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('links'))||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
 items.forEach(r=>{
 let linkVal=saved['link-'+r.no]||r.link||'';
@@ -418,7 +444,7 @@ html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.tar
 html+='</tbody></table>';
 document.getElementById('skp-table-container').innerHTML=html;
 }
-function saveLink(no,val){let d=JSON.parse(localStorage.getItem('skp-rhk')||'{}');d['link-'+no]=val;localStorage.setItem('skp-rhk',JSON.stringify(d));}
+function saveLink(no,val){let d=JSON.parse(localStorage.getItem(getKey('links'))||'{}');d['link-'+no]=val;localStorage.setItem(getKey('links'),JSON.stringify(d));}
 function saveSKP(){alert('Data SKP tersimpan!');}
 
 // === EDIT RHK ===
@@ -462,7 +488,7 @@ let selNo=parseInt(document.getElementById('edit-rhk-select').value);
 let idx=RHK_DATA.findIndex(x=>x.no===selNo);
 if(idx===-1)return;
 RHK_DATA[idx]={no:parseInt(document.getElementById('edt-no').value),tw:parseInt(document.getElementById('edt-tw').value),rhkAtasan:document.getElementById('edt-rhkAtasan').value,rhk:document.getElementById('edt-rhk').value,aspekK:document.getElementById('edt-aspekK').value,targetK:document.getElementById('edt-targetK').value,aspekW:document.getElementById('edt-aspekW').value,targetW:document.getElementById('edt-targetW').value,aksi:document.getElementById('edt-aksi').value,bukti:document.getElementById('edt-bukti').value,link:document.getElementById('edt-link').value};
-localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+localStorage.setItem(getKey('rhk'),JSON.stringify(RHK_DATA));
 showTW(currentTW);
 populateEditSelect();
 alert('RHK '+selNo+' berhasil diupdate!');
@@ -471,7 +497,7 @@ function addNewRHK(){
 let maxNo=Math.max(...RHK_DATA.map(r=>r.no));
 let newRHK={no:maxNo+1,tw:currentTW,rhkAtasan:'[Isi RHK Atasan]',rhk:'[Isi Rencana Hasil Kerja Baru]',aspekK:'[Isi IKI Kuantitas]',targetK:'0',aspekW:'[Isi IKI Waktu]',targetW:'12 Bulan',aksi:'[Isi Rencana Aksi]',bukti:'[Isi Bukti Dukung]',link:''};
 RHK_DATA.push(newRHK);
-localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+localStorage.setItem(getKey('rhk'),JSON.stringify(RHK_DATA));
 showTW(currentTW);
 populateEditSelect();
 document.getElementById('edit-rhk-select').value=newRHK.no;
@@ -483,7 +509,7 @@ let selNo=parseInt(document.getElementById('edit-rhk-select').value);
 if(!confirm('Yakin hapus RHK '+selNo+'?'))return;
 let idx=RHK_DATA.findIndex(x=>x.no===selNo);
 if(idx>-1)RHK_DATA.splice(idx,1);
-localStorage.setItem('skp-rhk-data',JSON.stringify(RHK_DATA));
+localStorage.setItem(getKey('rhk'),JSON.stringify(RHK_DATA));
 showTW(currentTW);
 populateEditSelect();
 alert('RHK '+selNo+' dihapus.');
@@ -493,7 +519,7 @@ alert('RHK '+selNo+' dihapus.');
 function showEvalTW(tw){
 document.querySelectorAll('#page-evaluasi .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
-let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eval'))||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK</th><th>Target</th><th>Realisasi</th><th>Capaian %</th><th>Umpan Balik</th><th>Rating</th></tr></thead><tbody>';
 items.forEach(r=>{
 let real=saved['real-'+r.no]||'';
@@ -511,11 +537,11 @@ html+='</tbody></table>';
 document.getElementById('eval-container').innerHTML=html;
 renderEvalSummary();
 }
-function saveEvalField(no,field,val){let d=JSON.parse(localStorage.getItem('skp-eval')||'{}');d[field+'-'+no]=val;localStorage.setItem('skp-eval',JSON.stringify(d));showEvalTW(currentTW);}
-function saveEval(){localStorage.setItem('skp-eval',JSON.stringify(JSON.parse(localStorage.getItem('skp-eval')||'{}')));alert('Evaluasi tersimpan!');}
+function saveEvalField(no,field,val){let d=JSON.parse(localStorage.getItem(getKey('eval'))||'{}');d[field+'-'+no]=val;localStorage.setItem(getKey('eval'),JSON.stringify(d));showEvalTW(currentTW);}
+function saveEval(){localStorage.setItem(getKey('eval'),JSON.stringify(JSON.parse(localStorage.getItem(getKey('eval'))||'{}')));alert('Evaluasi tersimpan!');}
 function hitungEval(){showEvalTW(1);renderEvalSummary();alert('Evaluasi dihitung ulang!');}
 function renderEvalSummary(){
-let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eval'))||'{}');
 let total=0,count=0;
 RHK_DATA.forEach(r=>{
 let real=parseFloat(saved['real-'+r.no])||0;
@@ -531,7 +557,7 @@ document.getElementById('eval-summary').innerHTML='<p><strong>Rata-rata Capaian:
 function showEvidenTW(tw){
 document.querySelectorAll('#page-eviden .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
-let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eviden'))||'{}');
 let html='<table><thead><tr><th>No</th><th>RHK</th><th>Bukti Dukung</th><th>Link Eviden</th><th>Status</th></tr></thead><tbody>';
 items.forEach(r=>{
 let links=getEvidenLinks(r.no);
@@ -547,7 +573,7 @@ html+='</tbody></table>';
 document.getElementById('eviden-container').innerHTML=html;
 }
 function getEvidenLinks(no){
-let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eviden'))||'{}');
 let links=saved['evlinks-'+no]||[];
 let r=RHK_DATA.find(x=>x.no===no);
 if(links.length===0&&r&&r.link){links=[{nama:r.bukti,url:r.link}];}
@@ -595,13 +621,13 @@ let nama=document.getElementById('ev-nama-'+no).value;
 let url=document.getElementById('ev-url-'+no).value;
 if(!url){alert('Masukkan link eviden');return;}
 if(!nama)nama='Eviden RHK '+no;
-let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eviden'))||'{}');
 let links=saved['evlinks-'+no]||[];
 let r=RHK_DATA.find(x=>x.no===no);
 if(links.length===0&&r&&r.link){links=[{nama:r.bukti,url:r.link}];}
 links.push({nama:nama,url:url});
 saved['evlinks-'+no]=links;
-localStorage.setItem('skp-eviden',JSON.stringify(saved));
+localStorage.setItem(getKey('eviden'),JSON.stringify(saved));
 document.getElementById('modal-eviden').remove();
 let tw=r?r.tw:1;
 showEvidenTW(tw);
@@ -609,25 +635,25 @@ showEvidenDetail(no);
 }
 function removeEvidenFile(no,idx){
 if(!confirm('Hapus eviden ini?'))return;
-let saved=JSON.parse(localStorage.getItem('skp-eviden')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eviden'))||'{}');
 let links=saved['evlinks-'+no]||[];
 let r=RHK_DATA.find(x=>x.no===no);
 if(links.length===0&&r&&r.link){links=[{nama:r.bukti,url:r.link}];}
 links.splice(idx,1);
 saved['evlinks-'+no]=links;
-localStorage.setItem('skp-eviden',JSON.stringify(saved));
+localStorage.setItem(getKey('eviden'),JSON.stringify(saved));
 document.getElementById('modal-eviden').remove();
 let tw=r?r.tw:1;
 showEvidenTW(tw);
 showEvidenDetail(no);
 }
-function saveEvidenLink(no,val){let d=JSON.parse(localStorage.getItem('skp-eviden')||'{}');d['evlink-'+no]=val;localStorage.setItem('skp-eviden',JSON.stringify(d));}
+function saveEvidenLink(no,val){let d=JSON.parse(localStorage.getItem(getKey('eviden'))||'{}');d['evlink-'+no]=val;localStorage.setItem(getKey('eviden'),JSON.stringify(d));}
 function saveEviden(){alert('Data eviden tersimpan!');}
 
 // === LAMPIRAN ===
 function saveLampiran(){
 let data={sd1:document.getElementById('lamp-sd1').value,sd2:document.getElementById('lamp-sd2').value,sp1:document.getElementById('lamp-sp1').value,sp2:document.getElementById('lamp-sp2').value,sp3:document.getElementById('lamp-sp3').value,sp4:document.getElementById('lamp-sp4').value,k1:document.getElementById('lamp-k1').value,k2:document.getElementById('lamp-k2').value};
-localStorage.setItem('skp-lampiran',JSON.stringify(data));
+localStorage.setItem(getKey('lampiran'),JSON.stringify(data));
 alert('Lampiran tersimpan!');
 }
 
@@ -635,17 +661,17 @@ alert('Lampiran tersimpan!');
 function saveIdentitas(){
 let data={};
 ['id-nama','id-nip','id-pangkat','id-jabatan','id-unit','pp-nama','pp-nip','pp-pangkat','pp-jabatan','pp-unit','ap-nama','ap-nip','ap-pangkat','ap-jabatan','ap-unit'].forEach(id=>{data[id]=document.getElementById(id).value;});
-localStorage.setItem('skp-identitas',JSON.stringify(data));
+localStorage.setItem(getKey('identitas'),JSON.stringify(data));
 alert('Data identitas tersimpan!');
 }
 function loadIdentitas(){
-let data=JSON.parse(localStorage.getItem('skp-identitas')||'null');
+let data=JSON.parse(localStorage.getItem(getKey('identitas'))||'null');
 if(data){Object.keys(data).forEach(id=>{let el=document.getElementById(id);if(el)el.value=data[id];});}
 }
 
 // === KUADRAN ===
 function hitungKuadran(){
-let saved=JSON.parse(localStorage.getItem('skp-eval')||'{}');
+let saved=JSON.parse(localStorage.getItem(getKey('eval'))||'{}');
 let total=0,count=0;
 RHK_DATA.forEach(r=>{
 let real=parseFloat(saved['real-'+r.no])||0;
@@ -678,35 +704,153 @@ const MADRASAH_DEFAULT=[
 {nama:"MAS NURUL IMAM",kepsek:"RIZQY FEBRI PUJI LESTARI, S.Pd",hp:"085231092837",nsm:"131235090091",npsn:"69881456",alamat:"Jl. Sukosari Randuagung Sumberjambe",desa:"Cumedak",kec:"Sumberjambe"},
 {nama:"MAS PLUS AL MAHFUDZ",kepsek:"M.Ainul Fata Al Kiromi, S.H, M.Pd.I",hp:"082221046105",nsm:"131235090105",npsn:"20595872",alamat:"Jl. Gunung Raung No. 01 Desa Pringgondani Kecamatan Sumberjambe",desa:"Pringgondani",kec:"Sumberjambe"}
 ];
+// === PERIODE HELPER ===
+function getActivePeriod(){
+return localStorage.getItem('skp-active-period')||'2026';
+}
+function getKey(base){
+return 'skp-'+getActivePeriod()+'-'+base;
+}
+function getPeriodeList(){
+let list=JSON.parse(localStorage.getItem('skp-periode-list')||'null');
+if(!list)list=['2026'];
+return list;
+}
+function savePeriodeList(list){
+localStorage.setItem('skp-periode-list',JSON.stringify(list));
+}
+function renderPeriodePage(){
+let active=getActivePeriod();
+document.getElementById('periode-aktif-label').textContent=active;
+let list=getPeriodeList();
+let sel=document.getElementById('periode-select');
+sel.innerHTML='';
+list.forEach(p=>{
+let opt=document.createElement('option');
+opt.value=p;
+opt.textContent='Tahun '+p;
+if(p===active)opt.selected=true;
+sel.appendChild(opt);
+});
+}
+function switchPeriode(val){
+localStorage.setItem('skp-active-period',val);
+document.getElementById('periode-aktif-label').textContent=val;
+loadRHKFromStorage();
+loadIdentitas();
+renderDashboard();
+renderMadrasah();
+alert('Periode aktif diubah ke: '+val);
+}
+function tambahPeriode(){
+let tahun=document.getElementById('periode-tahun-baru').value.trim();
+if(!tahun||isNaN(tahun)||tahun.length!==4){alert('Masukkan tahun yang valid (4 digit)');return;}
+let list=getPeriodeList();
+if(list.includes(tahun)){alert('Periode '+tahun+' sudah ada');return;}
+list.push(tahun);
+list.sort();
+savePeriodeList(list);
+document.getElementById('periode-tahun-baru').value='';
+renderPeriodePage();
+alert('Periode '+tahun+' berhasil ditambahkan!');
+}
+
 function getMadrasahData(){
-let saved=JSON.parse(localStorage.getItem('skp-madrasah')||'null');
+let saved=JSON.parse(localStorage.getItem(getKey('madrasah'))||'null');
 return saved||MADRASAH_DEFAULT.slice();
 }
 function saveMadrasahData(data){
-localStorage.setItem('skp-madrasah',JSON.stringify(data));
+localStorage.setItem(getKey('madrasah'),JSON.stringify(data));
 }
 function renderMadrasah(){
 let data=getMadrasahData();
 let html='';
 data.forEach((m,i)=>{
 html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+m.nama+'</td><td style="font-size:11px">'+m.kepsek+'</td><td style="font-size:11px">'+m.hp+'</td><td style="font-size:11px">'+m.nsm+'</td><td style="font-size:11px">'+m.npsn+'</td><td style="font-size:11px">'+m.alamat+'</td><td style="font-size:11px">'+m.desa+'</td><td style="font-size:11px">'+m.kec+'</td>';
-html+='<td><button class="btn" style="background:#e74c3c;color:#fff;font-size:10px;padding:4px 8px" onclick="hapusMadrasah('+i+')">Hapus</button></td></tr>';
+html+='<td><button class="btn" style="background:#f39c12;color:#fff;font-size:10px;padding:4px 8px;margin-right:4px" onclick="editMadrasah('+i+')">Edit</button><button class="btn" style="background:#e74c3c;color:#fff;font-size:10px;padding:4px 8px" onclick="hapusMadrasah('+i+')">Hapus</button></td></tr>';
 });
 document.getElementById('tbody-madrasah').innerHTML=html;
 }
+let madrasahEditIndex=-1;
 function showAddMadrasah(){
+madrasahEditIndex=-1;
+document.getElementById('form-madrasah-title').textContent='Tambah Madrasah Baru';
 document.getElementById('add-madrasah-form').style.display='block';
 ['md-nama','md-kepsek','md-hp','md-nsm','md-npsn','md-alamat','md-desa','md-kec'].forEach(id=>{document.getElementById(id).value='';});
+}
+function editMadrasah(idx){
+let data=getMadrasahData();
+let m=data[idx];
+madrasahEditIndex=idx;
+document.getElementById('form-madrasah-title').textContent='Edit Madrasah';
+document.getElementById('add-madrasah-form').style.display='block';
+document.getElementById('md-nama').value=m.nama||'';
+document.getElementById('md-kepsek').value=m.kepsek||'';
+document.getElementById('md-hp').value=m.hp||'';
+document.getElementById('md-nsm').value=m.nsm||'';
+document.getElementById('md-npsn').value=m.npsn||'';
+document.getElementById('md-alamat').value=m.alamat||'';
+document.getElementById('md-desa').value=m.desa||'';
+document.getElementById('md-kec').value=m.kec||'';
+}
+function batalMadrasah(){
+madrasahEditIndex=-1;
+document.getElementById('add-madrasah-form').style.display='none';
 }
 function simpanMadrasah(){
 let m={nama:document.getElementById('md-nama').value,kepsek:document.getElementById('md-kepsek').value,hp:document.getElementById('md-hp').value,nsm:document.getElementById('md-nsm').value,npsn:document.getElementById('md-npsn').value,alamat:document.getElementById('md-alamat').value,desa:document.getElementById('md-desa').value,kec:document.getElementById('md-kec').value};
 if(!m.nama){alert('Nama Madrasah wajib diisi');return;}
 let data=getMadrasahData();
+if(madrasahEditIndex>=0){
+data[madrasahEditIndex]=m;
+}else{
 data.push(m);
+}
 saveMadrasahData(data);
+madrasahEditIndex=-1;
 document.getElementById('add-madrasah-form').style.display='none';
 renderMadrasah();
-alert('Data madrasah berhasil ditambahkan!');
+alert(madrasahEditIndex>=0?'Data madrasah berhasil diupdate!':'Data madrasah berhasil ditambahkan!');
+}
+function importExcelMadrasah(){
+document.getElementById('excel-file-input').click();
+}
+function handleExcelFile(event){
+let file=event.target.files[0];
+if(!file)return;
+let reader=new FileReader();
+reader.onload=function(e){
+try{
+let workbook=XLSX.read(e.target.result,{type:'array'});
+let sheet=workbook.Sheets[workbook.SheetNames[0]];
+let rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
+let data=getMadrasahData();
+let count=0;
+rows.forEach(row=>{
+let nama=row['NAMA MADRASAH']||row['nama madrasah']||'';
+if(!nama)return;
+let m={
+nama:String(nama).trim(),
+kepsek:String(row['NAMA KEPALA MADRASAH']||row['nama kepala madrasah']||'').trim(),
+hp:String(row['NO. HP']||row['NO HP']||row['no. hp']||row['no hp']||'').trim(),
+nsm:String(row['NSM']||row['nsm']||'').trim(),
+npsn:String(row['NPSN']||row['npsn']||'').trim(),
+alamat:String(row['ALAMAT']||row['alamat']||'').trim(),
+desa:String(row['DESA']||row['desa']||'').trim(),
+kec:String(row['KECAMATAN']||row['kecamatan']||'').trim()
+};
+data.push(m);
+count++;
+});
+saveMadrasahData(data);
+renderMadrasah();
+alert('Berhasil import '+count+' data madrasah dari Excel!');
+}catch(err){
+alert('Gagal membaca file Excel: '+err.message);
+}
+};
+reader.readAsArrayBuffer(file);
+event.target.value='';
 }
 function hapusMadrasah(idx){
 if(!confirm('Hapus data madrasah ini?'))return;
@@ -717,7 +861,7 @@ renderMadrasah();
 }
 
 // === INIT ===
-window.onload=function(){loadRHKFromStorage();loadIdentitas();renderDashboard();renderMadrasah();};
+window.onload=function(){loadRHKFromStorage();loadIdentitas();renderDashboard();renderMadrasah();renderPeriodePage();};
 </script>
 </body>
 </html>
