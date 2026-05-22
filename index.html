@@ -379,7 +379,7 @@ let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerj
 items.forEach(r=>{
 let linkVal=saved['link-'+r.no]||r.link||'';
 let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal?'pointer':'text')+'" value="'+(linkVal||'')+'" onchange="saveLink('+r.no+',this.value)" ondblclick="if(this.value)window.open(this.value,\''+'_blank\''+')"  placeholder="Paste link..." '+(linkVal?'readonly':'')+'>'; 
-html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2">'+linkHtml+'</td></tr>';
+html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2" style="min-width:160px">'+linkHtml+'</td></tr>';
 html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
 });
 html+='</tbody></table>';
@@ -504,13 +504,10 @@ items.forEach(r=>{
 let links=getEvidenLinks(r.no);
 let count=links.length;
 let status=count>0?'<span class="badge badge-sb">'+count+' file</span>':'<span class="badge badge-k">Belum</span>';
-let linkHtml='';
-if(links.length>0){
-links.forEach((lnk,i)=>{linkHtml+='<div style="margin-bottom:4px"><a href="'+lnk.url+'" target="_blank" class="eviden-link" style="font-size:11px">&#128206; '+(lnk.nama||'Eviden '+(i+1))+'</a></div>';});
-}
-linkHtml+='<div style="margin-top:5px"><button style="font-size:10px;padding:2px 8px;background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer" onclick="showEvidenDetail('+r.no+')">+ Tambah</button></div>';
+let linkVal2=saved['link-'+r.no]||r.link||'';
+let linkHtml='<input style="width:100%;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal2?'pointer':'text')+'" value="'+(linkVal2||'')+'" onchange="saveEvidenLink('+r.no+',this.value)" ondblclick="if(this.value)window.open(this.value,\'_blank\')" placeholder="Paste link..." '+(linkVal2?'readonly':'')+'>';
 html+='<tr><td>'+r.no+'</td><td style="font-size:11px;text-align:left">'+r.rhk.substring(0,60)+'...</td><td style="font-size:11px;text-align:left">'+r.bukti+'</td>';
-html+='<td style="text-align:left">'+linkHtml+'</td>';
+html+='<td style="text-align:left;min-width:160px">'+linkHtml+'</td>';
 html+='<td>'+status+'</td></tr>';
 });
 html+='</tbody></table>';
