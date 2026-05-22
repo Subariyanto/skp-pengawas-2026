@@ -767,7 +767,7 @@ let data=getMadrasahData();
 let html='';
 data.forEach((m,i)=>{
 html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+m.nama+'</td><td style="font-size:11px">'+m.kepsek+'</td><td style="font-size:11px">'+m.hp+'</td><td style="font-size:11px">'+m.nsm+'</td><td style="font-size:11px">'+m.npsn+'</td><td style="font-size:11px">'+m.alamat+'</td><td style="font-size:11px">'+m.desa+'</td><td style="font-size:11px">'+m.kec+'</td>';
-html+='<td><button class="btn" style="background:#f39c12;color:#fff;font-size:10px;padding:4px 8px;margin-right:4px" onclick="editMadrasah('+i+')">Edit</button><button class="btn" style="background:#e74c3c;color:#fff;font-size:10px;padding:4px 8px" onclick="hapusMadrasah('+i+')">Hapus</button></td></tr>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:16px;margin-right:4px" onclick="editMadrasah('+i+')">✏️</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:16px" onclick="hapusMadrasah('+i+')">🗑️</button></td></tr>';
 });
 document.getElementById('tbody-madrasah').innerHTML=html;
 }
