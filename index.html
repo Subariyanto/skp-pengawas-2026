@@ -84,6 +84,10 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
 <a href="#" onclick="showPage('eviden')"><span class="icon">&#128206;</span>Eviden</a>
 <a href="#" onclick="showPage('madrasah')"><span class="icon">&#127979;</span>Data Madrasah</a>
+<a href="#" onclick="showPage('jadwal')"><span class="icon">&#128197;</span>Jadwal Pendampingan</a>
+<a href="#" onclick="showPage('catatan')"><span class="icon">&#128221;</span>Catatan Pendampingan</a>
+<a href="#" onclick="showPage('surat')"><span class="icon">&#128220;</span>Surat Keterangan</a>
+<a href="#" onclick="showPage('gen-eviden')"><span class="icon">&#128194;</span>Generator Eviden RHK</a>
 <a href="#" onclick="showPage('kuadran')"><span class="icon">&#128208;</span>Kuadran & Distribusi</a>
 </nav>
 <div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
@@ -293,6 +297,114 @@ tr:nth-child(even){background:#f8f9fa}
 </table>
 </div>
 </div>
+<!-- JADWAL PENDAMPINGAN -->
+<div class="page" id="page-jadwal">
+<h2 style="margin-bottom:20px;color:var(--primary)">Jadwal Pendampingan</h2>
+<div class="tw-tabs">
+<div class="tw-tab active" onclick="showJadwalTW(1)">Triwulan I</div>
+<div class="tw-tab" onclick="showJadwalTW(2)">Triwulan II</div>
+<div class="tw-tab" onclick="showJadwalTW(3)">Triwulan III</div>
+<div class="tw-tab" onclick="showJadwalTW(4)">Triwulan IV</div>
+</div>
+<div class="card">
+<h3>Tambah Jadwal</h3>
+<div class="form-grid">
+<div class="form-group"><label>Tanggal</label><input type="date" id="jdw-tanggal"></div>
+<div class="form-group"><label>Madrasah</label><select id="jdw-madrasah"></select></div>
+<div class="form-group"><label>RHK Terkait</label><select id="jdw-rhk"></select></div>
+<div class="form-group"><label>Kegiatan</label><input id="jdw-kegiatan" placeholder="Kegiatan pendampingan"></div>
+<div class="form-group"><label>Status</label><select id="jdw-status"><option value="Terjadwal">Terjadwal</option><option value="Terlaksana">Terlaksana</option><option value="Batal">Batal</option></select></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="simpanJadwal()">&#128190; Simpan</button>
+<button class="btn" style="background:#95a5a6;color:#fff" onclick="resetFormJadwal()">Reset</button>
+</div>
+</div>
+<div class="card">
+<h3>Daftar Jadwal</h3>
+<table><thead><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>RHK</th><th>Kegiatan</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody id="tbody-jadwal"></tbody></table>
+</div>
+</div>
+
+<!-- CATATAN PENDAMPINGAN -->
+<div class="page" id="page-catatan">
+<h2 style="margin-bottom:20px;color:var(--primary)">Catatan Pendampingan</h2>
+<div class="tw-tabs">
+<div class="tw-tab active" onclick="showCatatanTW(1)">Triwulan I</div>
+<div class="tw-tab" onclick="showCatatanTW(2)">Triwulan II</div>
+<div class="tw-tab" onclick="showCatatanTW(3)">Triwulan III</div>
+<div class="tw-tab" onclick="showCatatanTW(4)">Triwulan IV</div>
+</div>
+<div class="card">
+<h3>Tambah Catatan</h3>
+<div class="form-grid">
+<div class="form-group"><label>Tanggal</label><input type="date" id="cat-tanggal"></div>
+<div class="form-group"><label>Madrasah</label><select id="cat-madrasah"></select></div>
+<div class="form-group"><label>RHK Terkait</label><select id="cat-rhk"></select></div>
+<div class="form-group"><label>Kegiatan yang Dilakukan</label><input id="cat-kegiatan" placeholder="Kegiatan"></div>
+<div class="form-group"><label>Peserta</label><input id="cat-peserta" placeholder="Nama peserta (pisahkan koma)"></div>
+<div class="form-group"><label>Hasil/Temuan</label><textarea id="cat-hasil" placeholder="Hasil dan temuan"></textarea></div>
+<div class="form-group"><label>Tindak Lanjut</label><textarea id="cat-tindaklanjut" placeholder="Rencana tindak lanjut"></textarea></div>
+<div class="form-group"><label>Link Dokumentasi Foto</label><input id="cat-link" placeholder="https://..."></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="simpanCatatan()">&#128190; Simpan</button>
+<button class="btn" style="background:#95a5a6;color:#fff" onclick="resetFormCatatan()">Reset</button>
+</div>
+</div>
+<div class="card">
+<h3>Daftar Catatan</h3>
+<table><thead><tr><th>No</th><th>Tanggal</th><th>Madrasah</th><th>RHK</th><th>Kegiatan</th><th>Peserta</th><th>Hasil</th><th>Tindak Lanjut</th><th>Foto</th><th>Aksi</th></tr></thead>
+<tbody id="tbody-catatan"></tbody></table>
+</div>
+</div>
+
+<!-- SURAT KETERANGAN PENDAMPINGAN -->
+<div class="page" id="page-surat">
+<h2 style="margin-bottom:20px;color:var(--primary)">Surat Keterangan Pendampingan</h2>
+<div class="card">
+<h3>Generate Surat Keterangan</h3>
+<div class="form-grid">
+<div class="form-group"><label>Mode Generate</label><select id="surat-mode" onchange="updateSuratOptions()"><option value="madrasah">Per Madrasah</option><option value="triwulan">Per Triwulan</option></select></div>
+<div class="form-group" id="surat-madrasah-group"><label>Pilih Madrasah</label><select id="surat-madrasah"></select></div>
+<div class="form-group" id="surat-tw-group" style="display:none"><label>Pilih Triwulan</label><select id="surat-tw"><option value="1">Triwulan I</option><option value="2">Triwulan II</option><option value="3">Triwulan III</option><option value="4">Triwulan IV</option></select></div>
+<div class="form-group"><label>Nomor Surat</label><input id="surat-nomor" placeholder="B-xxx/Kk.13.09/Pw.01/05/2026"></div>
+<div class="form-group"><label>Perihal</label><input id="surat-perihal" value="Keterangan Melaksanakan Pendampingan"></div>
+<div class="form-group"><label>Tempat, Tanggal Surat</label><input id="surat-tempat" placeholder="Jember, 30 Maret 2026"></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="generateSurat()">&#128196; Generate Surat</button>
+<button class="btn btn-print" onclick="cetakSurat()">&#128424; Cetak</button>
+</div>
+</div>
+<div class="card" id="surat-preview" style="display:none">
+<div id="surat-content"></div>
+</div>
+<div class="card">
+<h3>Riwayat Surat</h3>
+<table><thead><tr><th>No</th><th>Nomor Surat</th><th>Madrasah/Triwulan</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+<tbody id="tbody-surat"></tbody></table>
+</div>
+</div>
+
+<!-- GENERATOR EVIDEN RHK -->
+<div class="page" id="page-gen-eviden">
+<h2 style="margin-bottom:20px;color:var(--primary)">Generator Eviden RHK</h2>
+<div class="card">
+<h3>Pilih RHK</h3>
+<div class="form-grid">
+<div class="form-group"><label>RHK</label><select id="gen-rhk-select" onchange="generateEvidenRHK()"></select></div>
+</div>
+</div>
+<div class="card" id="gen-eviden-preview" style="display:none">
+<div id="gen-eviden-content"></div>
+<div class="btn-group">
+<button class="btn btn-print" onclick="cetakEvidenRHK()">&#128424; Cetak Eviden</button>
+</div>
+</div>
+</div>
+
 <!-- KUADRAN -->
 <div class="page" id="page-kuadran">
 <h2 style="margin-bottom:20px;color:var(--primary)">Kuadran Kinerja & Pola Distribusi</h2>
@@ -369,6 +481,10 @@ if(id==='evaluasi')showEvalTW(1);
 if(id==='eviden')showEvidenTW(1);
 if(id==='madrasah')renderMadrasah();
 if(id==='periode')renderPeriodePage();
+if(id==='jadwal'){initJadwalDropdowns();showJadwalTW(1);}
+if(id==='catatan'){initCatatanDropdowns();showCatatanTW(1);}
+if(id==='surat'){initSuratDropdowns();renderRiwayatSurat();}
+if(id==='gen-eviden')initGenEvidenDropdown();
 }
 
 // === DASHBOARD ===
@@ -858,6 +974,351 @@ let data=getMadrasahData();
 data.splice(idx,1);
 saveMadrasahData(data);
 renderMadrasah();
+}
+
+
+// === JADWAL PENDAMPINGAN ===
+let jadwalEditIndex=-1;
+function getJadwalData(){return JSON.parse(localStorage.getItem(getKey('jadwal'))||'[]');}
+function saveJadwalData(data){localStorage.setItem(getKey('jadwal'),JSON.stringify(data));}
+function initJadwalDropdowns(){
+let md=getMadrasahData();
+let selM=document.getElementById('jdw-madrasah');
+selM.innerHTML='<option value="">-- Pilih Madrasah --</option>';
+md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+let selR=document.getElementById('jdw-rhk');
+selR.innerHTML='<option value="">-- Pilih RHK --</option>';
+RHK_DATA.forEach(r=>{selR.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,50)+'...</option>';});
+}
+function showJadwalTW(tw){
+document.querySelectorAll('#page-jadwal .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
+let data=getJadwalData().filter(j=>{let m=new Date(j.tanggal).getMonth();let twJ=m<3?1:m<6?2:m<9?3:4;return twJ===tw;});
+let html='';
+data.forEach((j,i)=>{
+let allData=getJadwalData();
+let realIdx=allData.indexOf(j);
+let statusBadge=j.status==='Terlaksana'?'badge-sb':j.status==='Batal'?'badge-k':'badge-b';
+let md=getMadrasahData();
+let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';
+let rhk=RHK_DATA.find(r=>r.no==j.rhkNo);
+html+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+j.rhkNo+'</td><td style="font-size:11px">'+j.kegiatan+'</td><td><span class="badge '+statusBadge+'">'+j.status+'</span></td>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editJadwal('+realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusJadwal('+realIdx+')">&#128465;&#65039;</button></td></tr>';
+});
+if(!html)html='<tr><td colspan="7" style="text-align:center;color:#999">Belum ada jadwal di triwulan ini</td></tr>';
+document.getElementById('tbody-jadwal').innerHTML=html;
+}
+function simpanJadwal(){
+let tgl=document.getElementById('jdw-tanggal').value;
+let mdIdx=document.getElementById('jdw-madrasah').value;
+let rhkNo=document.getElementById('jdw-rhk').value;
+let keg=document.getElementById('jdw-kegiatan').value;
+let sts=document.getElementById('jdw-status').value;
+if(!tgl||mdIdx===''||!rhkNo||!keg){alert('Lengkapi semua field!');return;}
+let data=getJadwalData();
+let item={tanggal:tgl,madrasahIdx:parseInt(mdIdx),rhkNo:parseInt(rhkNo),kegiatan:keg,status:sts};
+if(jadwalEditIndex>=0){data[jadwalEditIndex]=item;jadwalEditIndex=-1;}
+else{data.push(item);}
+saveJadwalData(data);
+resetFormJadwal();
+let m=new Date(tgl).getMonth();let tw=m<3?1:m<6?2:m<9?3:4;
+showJadwalTW(tw);
+alert('Jadwal berhasil disimpan!');
+}
+function editJadwal(idx){
+let data=getJadwalData();
+let j=data[idx];
+jadwalEditIndex=idx;
+document.getElementById('jdw-tanggal').value=j.tanggal;
+document.getElementById('jdw-madrasah').value=j.madrasahIdx;
+document.getElementById('jdw-rhk').value=j.rhkNo;
+document.getElementById('jdw-kegiatan').value=j.kegiatan;
+document.getElementById('jdw-status').value=j.status;
+}
+function hapusJadwal(idx){
+if(!confirm('Hapus jadwal ini?'))return;
+let data=getJadwalData();data.splice(idx,1);saveJadwalData(data);
+showJadwalTW(1);
+}
+function resetFormJadwal(){
+jadwalEditIndex=-1;
+document.getElementById('jdw-tanggal').value='';
+document.getElementById('jdw-madrasah').value='';
+document.getElementById('jdw-rhk').value='';
+document.getElementById('jdw-kegiatan').value='';
+document.getElementById('jdw-status').value='Terjadwal';
+}
+
+// === CATATAN PENDAMPINGAN ===
+let catatanEditIndex=-1;
+function getCatatanData(){return JSON.parse(localStorage.getItem(getKey('catatan'))||'[]');}
+function saveCatatanData(data){localStorage.setItem(getKey('catatan'),JSON.stringify(data));}
+function initCatatanDropdowns(){
+let md=getMadrasahData();
+let selM=document.getElementById('cat-madrasah');
+selM.innerHTML='<option value="">-- Pilih Madrasah --</option>';
+md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+let selR=document.getElementById('cat-rhk');
+selR.innerHTML='<option value="">-- Pilih RHK --</option>';
+RHK_DATA.forEach(r=>{selR.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,50)+'...</option>';});
+}
+function showCatatanTW(tw){
+document.querySelectorAll('#page-catatan .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
+let data=getCatatanData().filter(c=>{let m=new Date(c.tanggal).getMonth();let twC=m<3?1:m<6?2:m<9?3:4;return twC===tw;});
+let html='';
+let md=getMadrasahData();
+data.forEach((c,i)=>{
+let allData=getCatatanData();
+let realIdx=allData.indexOf(c);
+let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
+let fotoLink=c.link?'<a href="'+c.link+'" target="_blank" style="font-size:11px">&#128247; Lihat</a>':'-';
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+c.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+c.rhkNo+'</td><td style="font-size:11px">'+c.kegiatan+'</td><td style="font-size:11px">'+c.peserta+'</td><td style="font-size:11px">'+c.hasil.substring(0,40)+'</td><td style="font-size:11px">'+c.tindaklanjut.substring(0,40)+'</td><td>'+fotoLink+'</td>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editCatatan('+realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusCatatan('+realIdx+')">&#128465;&#65039;</button></td></tr>';
+});
+if(!html)html='<tr><td colspan="10" style="text-align:center;color:#999">Belum ada catatan di triwulan ini</td></tr>';
+document.getElementById('tbody-catatan').innerHTML=html;
+}
+function simpanCatatan(){
+let tgl=document.getElementById('cat-tanggal').value;
+let mdIdx=document.getElementById('cat-madrasah').value;
+let rhkNo=document.getElementById('cat-rhk').value;
+let keg=document.getElementById('cat-kegiatan').value;
+let peserta=document.getElementById('cat-peserta').value;
+let hasil=document.getElementById('cat-hasil').value;
+let tl=document.getElementById('cat-tindaklanjut').value;
+let link=document.getElementById('cat-link').value;
+if(!tgl||mdIdx===''||!rhkNo||!keg){alert('Lengkapi field wajib (tanggal, madrasah, RHK, kegiatan)!');return;}
+let data=getCatatanData();
+let item={tanggal:tgl,madrasahIdx:parseInt(mdIdx),rhkNo:parseInt(rhkNo),kegiatan:keg,peserta:peserta,hasil:hasil,tindaklanjut:tl,link:link};
+if(catatanEditIndex>=0){data[catatanEditIndex]=item;catatanEditIndex=-1;}
+else{data.push(item);}
+saveCatatanData(data);
+resetFormCatatan();
+let m=new Date(tgl).getMonth();let tw=m<3?1:m<6?2:m<9?3:4;
+showCatatanTW(tw);
+alert('Catatan berhasil disimpan!');
+}
+function editCatatan(idx){
+let data=getCatatanData();let c=data[idx];
+catatanEditIndex=idx;
+document.getElementById('cat-tanggal').value=c.tanggal;
+document.getElementById('cat-madrasah').value=c.madrasahIdx;
+document.getElementById('cat-rhk').value=c.rhkNo;
+document.getElementById('cat-kegiatan').value=c.kegiatan;
+document.getElementById('cat-peserta').value=c.peserta;
+document.getElementById('cat-hasil').value=c.hasil;
+document.getElementById('cat-tindaklanjut').value=c.tindaklanjut;
+document.getElementById('cat-link').value=c.link||'';
+}
+function hapusCatatan(idx){
+if(!confirm('Hapus catatan ini?'))return;
+let data=getCatatanData();data.splice(idx,1);saveCatatanData(data);
+showCatatanTW(1);
+}
+function resetFormCatatan(){
+catatanEditIndex=-1;
+['cat-tanggal','cat-madrasah','cat-rhk','cat-kegiatan','cat-peserta','cat-hasil','cat-tindaklanjut','cat-link'].forEach(id=>{document.getElementById(id).value='';});
+}
+
+
+// === SURAT KETERANGAN PENDAMPINGAN ===
+function initSuratDropdowns(){
+let md=getMadrasahData();
+let selM=document.getElementById('surat-madrasah');
+selM.innerHTML='<option value="">-- Pilih Madrasah --</option>';
+md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+updateSuratOptions();
+}
+function updateSuratOptions(){
+let mode=document.getElementById('surat-mode').value;
+document.getElementById('surat-madrasah-group').style.display=mode==='madrasah'?'block':'none';
+document.getElementById('surat-tw-group').style.display=mode==='triwulan'?'block':'none';
+}
+function getSuratData(){return JSON.parse(localStorage.getItem(getKey('surat'))||'[]');}
+function saveSuratData(data){localStorage.setItem(getKey('surat'),JSON.stringify(data));}
+function generateSurat(){
+let mode=document.getElementById('surat-mode').value;
+let nomor=document.getElementById('surat-nomor').value||'B-___/Kk.13.09/Pw.01/___/2026';
+let perihal=document.getElementById('surat-perihal').value;
+let tempat=document.getElementById('surat-tempat').value||'Jember, ........................';
+let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
+let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
+let nip=identitas['id-nip']||'197002122005011004';
+let jabatan=identitas['id-jabatan']||'Pengawas Madrasah Madya';
+let unit=identitas['id-unit']||'Kantor Kementerian Agama Kab. Jember';
+let ppNama=identitas['pp-nama']||'Dr. SANTOSO, S.Ag, M.Pd.';
+let ppNip=identitas['pp-nip']||'196908251991031003';
+let ppJabatan=identitas['pp-jabatan']||'Kepala Kantor Kementerian Agama Kab. Jember';
+let jadwal=getJadwalData().filter(j=>j.status==='Terlaksana');
+let md=getMadrasahData();
+let filtered=[];
+if(mode==='madrasah'){
+let mdIdx=parseInt(document.getElementById('surat-madrasah').value);
+if(isNaN(mdIdx)){alert('Pilih madrasah!');return;}
+filtered=jadwal.filter(j=>j.madrasahIdx===mdIdx);
+}else{
+let tw=parseInt(document.getElementById('surat-tw').value);
+filtered=jadwal.filter(j=>{let m=new Date(j.tanggal).getMonth();let twJ=m<3?1:m<6?2:m<9?3:4;return twJ===tw;});
+}
+if(filtered.length===0){alert('Tidak ada jadwal berstatus Terlaksana untuk filter ini.');return;}
+let kegiatanList='';
+filtered.forEach((j,i)=>{
+let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'';
+kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td>'+namaMd+'</td><td>'+j.kegiatan+'</td></tr>';
+});
+let html='<div style="font-family:Times New Roman,serif;padding:20px;line-height:1.8;font-size:14px" id="surat-print-area">';
+html+='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:20px">';
+html+='<h3 style="margin:0;font-size:16px">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h3>';
+html+='<h3 style="margin:0;font-size:15px">KANTOR KEMENTERIAN AGAMA KABUPATEN JEMBER</h3>';
+html+='<p style="margin:2px 0;font-size:12px">Jl. KH. Wahid Hasyim No. 1 Jember 68131</p></div>';
+html+='<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:16px;margin:20px 0">SURAT KETERANGAN</p>';
+html+='<p style="text-align:center;font-size:13px;margin-top:-10px">Nomor: '+nomor+'</p>';
+html+='<p style="margin-top:20px">Yang bertanda tangan di bawah ini:</p>';
+html+='<table style="margin:10px 0 10px 30px;border:none"><tr><td style="border:none;padding:3px 10px 3px 0">Nama</td><td style="border:none;padding:3px">: '+ppNama+'</td></tr>';
+html+='<tr><td style="border:none;padding:3px 10px 3px 0">NIP</td><td style="border:none;padding:3px">: '+ppNip+'</td></tr>';
+html+='<tr><td style="border:none;padding:3px 10px 3px 0">Jabatan</td><td style="border:none;padding:3px">: '+ppJabatan+'</td></tr></table>';
+html+='<p>Dengan ini menerangkan bahwa:</p>';
+html+='<table style="margin:10px 0 10px 30px;border:none"><tr><td style="border:none;padding:3px 10px 3px 0">Nama</td><td style="border:none;padding:3px">: '+nama+'</td></tr>';
+html+='<tr><td style="border:none;padding:3px 10px 3px 0">NIP</td><td style="border:none;padding:3px">: '+nip+'</td></tr>';
+html+='<tr><td style="border:none;padding:3px 10px 3px 0">Jabatan</td><td style="border:none;padding:3px">: '+jabatan+'</td></tr>';
+html+='<tr><td style="border:none;padding:3px 10px 3px 0">Unit Kerja</td><td style="border:none;padding:3px">: '+unit+'</td></tr></table>';
+html+='<p>Telah melaksanakan kegiatan pendampingan pada madrasah binaan sebagai berikut:</p>';
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tanggal</th><th style="border:1px solid #000;padding:6px;font-size:12px">Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kegiatan</th></tr></thead><tbody>'+kegiatanList+'</tbody></table>';
+html+='<p style="margin-top:20px">Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>';
+html+='<div style="margin-top:40px;text-align:right"><p>'+tempat+'</p><p>'+ppJabatan+',</p><br><br><br><p style="font-weight:bold;text-decoration:underline">'+ppNama+'</p><p>NIP. '+ppNip+'</p></div>';
+html+='</div>';
+document.getElementById('surat-content').innerHTML=html;
+document.getElementById('surat-preview').style.display='block';
+let suratRecord={nomor:nomor,mode:mode,madrasahIdx:mode==='madrasah'?parseInt(document.getElementById('surat-madrasah').value):null,tw:mode==='triwulan'?parseInt(document.getElementById('surat-tw').value):null,tanggal:tempat,perihal:perihal,timestamp:Date.now()};
+let suratList=getSuratData();suratList.push(suratRecord);saveSuratData(suratList);
+renderRiwayatSurat();
+}
+function renderRiwayatSurat(){
+let data=getSuratData();let md=getMadrasahData();
+let html='';
+data.forEach((s,i)=>{
+let target=s.mode==='madrasah'?(md[s.madrasahIdx]?md[s.madrasahIdx].nama:'-'):'Triwulan '+s.tw;
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+s.nomor+'</td><td style="font-size:11px">'+target+'</td><td style="font-size:11px">'+s.tanggal+'</td>';
+html+='<td><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusSurat('+i+')">&#128465;&#65039;</button></td></tr>';
+});
+if(!html)html='<tr><td colspan="5" style="text-align:center;color:#999">Belum ada surat</td></tr>';
+document.getElementById('tbody-surat').innerHTML=html;
+}
+function hapusSurat(idx){
+if(!confirm('Hapus surat ini?'))return;
+let data=getSuratData();data.splice(idx,1);saveSuratData(data);renderRiwayatSurat();
+}
+function cetakSurat(){
+let area=document.getElementById('surat-print-area');
+if(!area){alert('Generate surat terlebih dahulu!');return;}
+let w=window.open('','','width=800,height=600');
+w.document.write('<html><head><title>Cetak Surat Keterangan</title><style>body{font-family:Times New Roman,serif;padding:30px}table{border-collapse:collapse}td,th{padding:6px;font-size:12px}@media print{body{padding:0}}</style></head><body>');
+w.document.write(area.innerHTML);
+w.document.write('</body></html>');
+w.document.close();
+w.print();
+}
+
+
+// === GENERATOR EVIDEN RHK ===
+function initGenEvidenDropdown(){
+let sel=document.getElementById('gen-rhk-select');
+sel.innerHTML='<option value="">-- Pilih RHK --</option>';
+RHK_DATA.forEach(r=>{sel.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,60)+'...</option>';});
+}
+function generateEvidenRHK(){
+let rhkNo=parseInt(document.getElementById('gen-rhk-select').value);
+if(!rhkNo){document.getElementById('gen-eviden-preview').style.display='none';return;}
+let rhk=RHK_DATA.find(r=>r.no===rhkNo);
+if(!rhk){return;}
+let jadwal=getJadwalData().filter(j=>j.rhkNo===rhkNo);
+let catatan=getCatatanData().filter(c=>c.rhkNo===rhkNo);
+let suratList=getSuratData();
+let md=getMadrasahData();
+let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
+let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
+let nip=identitas['id-nip']||'197002122005011004';
+let jabatan=identitas['id-jabatan']||'Pengawas Madrasah Madya';
+let html='<div id="gen-eviden-print-area" style="font-family:Times New Roman,serif;line-height:1.8;font-size:13px">';
+html+='<h2 style="text-align:center;color:var(--primary);font-size:18px;margin-bottom:5px">DOKUMEN EVIDEN</h2>';
+html+='<h3 style="text-align:center;font-size:15px;margin-bottom:20px">RHK '+rhkNo+' - Triwulan '+rhk.tw+'</h3>';
+html+='<div style="background:#f0f9ff;padding:15px;border-radius:8px;margin-bottom:20px">';
+html+='<p><strong>Rencana Hasil Kerja:</strong> '+rhk.rhk+'</p>';
+html+='<p><strong>Aspek Kuantitas:</strong> '+rhk.aspekK+'</p>';
+html+='<p><strong>Target:</strong> '+rhk.targetK+'</p>';
+html+='<p><strong>Bukti Dukung:</strong> '+rhk.bukti+'</p>';
+html+='<p><strong>Pengawas:</strong> '+nama+' (NIP. '+nip+')</p></div>';
+html+='<h3 style="color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:5px">A. Bukti Perencanaan (Jadwal Pendampingan)</h3>';
+if(jadwal.length>0){
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">No</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Tanggal</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Madrasah</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Kegiatan</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Status</th></tr></thead><tbody>';
+jadwal.forEach((j,i)=>{
+let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';
+let statusBadge=j.status==='Terlaksana'?'color:#27ae60':j.status==='Batal'?'color:#e74c3c':'color:#2980b9';
+html+='<tr><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+(i+1)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+j.tanggal+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+namaMd+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+j.kegiatan+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px;font-weight:bold;'+statusBadge+'">'+j.status+'</td></tr>';
+});
+html+='</tbody></table>';
+}else{html+='<p style="color:#999;font-style:italic">Belum ada jadwal pendampingan untuk RHK ini.</p>';}
+html+='<h3 style="color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:5px;margin-top:25px">B. Bukti Pelaksanaan (Catatan Pendampingan)</h3>';
+if(catatan.length>0){
+catatan.forEach((c,i)=>{
+let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
+html+='<div style="background:#f8f9fa;padding:12px;border-radius:6px;margin:10px 0;border-left:4px solid var(--primary)">';
+html+='<p><strong>'+(i+1)+'. '+namaMd+' - '+c.tanggal+'</strong></p>';
+html+='<p><strong>Kegiatan:</strong> '+c.kegiatan+'</p>';
+html+='<p><strong>Peserta:</strong> '+c.peserta+'</p>';
+html+='<p><strong>Hasil/Temuan:</strong> '+c.hasil+'</p>';
+html+='<p><strong>Tindak Lanjut:</strong> '+c.tindaklanjut+'</p>';
+if(c.link){html+='<p><strong>Dokumentasi:</strong> <a href="'+c.link+'" target="_blank">Lihat Foto</a></p>';}
+html+='</div>';
+});
+}else{html+='<p style="color:#999;font-style:italic">Belum ada catatan pendampingan untuk RHK ini.</p>';}
+html+='<h3 style="color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:5px;margin-top:25px">C. Bukti Formal (Surat Keterangan)</h3>';
+let relatedSurat=suratList.filter(s=>{
+let sJadwal=getJadwalData().filter(j=>j.status==='Terlaksana'&&j.rhkNo===rhkNo);
+return sJadwal.length>0;
+});
+if(relatedSurat.length>0){
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">No</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Nomor Surat</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Madrasah/Triwulan</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Tanggal</th></tr></thead><tbody>';
+relatedSurat.forEach((s,i)=>{
+let target=s.mode==='madrasah'?(md[s.madrasahIdx]?md[s.madrasahIdx].nama:'-'):'Triwulan '+s.tw;
+html+='<tr><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+(i+1)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+s.nomor+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+target+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+s.tanggal+'</td></tr>';
+});
+html+='</tbody></table>';
+}else{html+='<p style="color:#999;font-style:italic">Belum ada surat keterangan terkait.</p>';}
+html+='<h3 style="color:var(--primary);border-bottom:2px solid var(--primary);padding-bottom:5px;margin-top:25px">D. Daftar Hadir Peserta</h3>';
+let allPeserta=[];
+catatan.forEach(c=>{
+if(c.peserta){
+let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
+c.peserta.split(',').forEach(p=>{
+if(p.trim())allPeserta.push({nama:p.trim(),madrasah:namaMd,tanggal:c.tanggal,kegiatan:c.kegiatan});
+});
+}
+});
+if(allPeserta.length>0){
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">No</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Nama</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Madrasah</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Tanggal</th><th style="border:1px solid #ddd;padding:8px;background:#1a5276;color:#fff;font-size:11px">Kegiatan</th></tr></thead><tbody>';
+allPeserta.forEach((p,i)=>{
+html+='<tr><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+(i+1)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+p.nama+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+p.madrasah+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+p.tanggal+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+p.kegiatan+'</td></tr>';
+});
+html+='</tbody></table>';
+}else{html+='<p style="color:#999;font-style:italic">Belum ada data peserta dari catatan pendampingan.</p>';}
+html+='<div style="margin-top:30px;text-align:right;padding-top:20px;border-top:1px solid #ddd">';
+html+='<p>Jember, ........................ 2026</p>';
+html+='<p>Pengawas Madrasah,</p><br><br><br>';
+html+='<p style="font-weight:bold;text-decoration:underline">'+nama+'</p>';
+html+='<p>NIP. '+nip+'</p></div>';
+html+='</div>';
+document.getElementById('gen-eviden-content').innerHTML=html;
+document.getElementById('gen-eviden-preview').style.display='block';
+}
+function cetakEvidenRHK(){
+let area=document.getElementById('gen-eviden-print-area');
+if(!area){alert('Pilih RHK dan generate eviden terlebih dahulu!');return;}
+let w=window.open('','','width=800,height=600');
+w.document.write('<html><head><title>Cetak Eviden RHK</title><style>body{font-family:Times New Roman,serif;padding:30px;font-size:13px;line-height:1.8}table{border-collapse:collapse;width:100%}td,th{padding:6px;font-size:11px}h2,h3{color:#1a5276}@media print{body{padding:10px}}</style></head><body>');
+w.document.write(area.innerHTML);
+w.document.write('</body></html>');
+w.document.close();
+w.print();
 }
 
 // === INIT ===
