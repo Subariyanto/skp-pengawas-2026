@@ -989,6 +989,7 @@ md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';}
 let selR=document.getElementById('jdw-rhk');
 selR.innerHTML='<option value="">-- Pilih RHK --</option>';
 RHK_DATA.forEach(r=>{selR.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,50)+'...</option>';});
+selR.addEventListener('change',function(){let rhk=RHK_DATA.find(r=>r.no==this.value);if(rhk){document.getElementById('jdw-kegiatan').value=rhk.aksi;}});
 }
 function showJadwalTW(tw){
 document.querySelectorAll('#page-jadwal .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
@@ -1060,6 +1061,7 @@ md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';}
 let selR=document.getElementById('cat-rhk');
 selR.innerHTML='<option value="">-- Pilih RHK --</option>';
 RHK_DATA.forEach(r=>{selR.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,50)+'...</option>';});
+selR.addEventListener('change',function(){let rhk=RHK_DATA.find(r=>r.no==this.value);if(rhk){document.getElementById('cat-kegiatan').value=rhk.aksi;}});
 }
 function showCatatanTW(tw){
 document.querySelectorAll('#page-catatan .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
