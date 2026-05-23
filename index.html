@@ -343,7 +343,7 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="form-group"><label>Madrasah</label><select id="cat-madrasah"></select></div>
 <div class="form-group"><label>RHK Terkait</label><select id="cat-rhk"></select></div>
 <div class="form-group"><label>Kegiatan yang Dilakukan</label><input id="cat-kegiatan" placeholder="Kegiatan"></div>
-<div class="form-group"><label>Peserta</label><input id="cat-peserta" placeholder="Nama peserta (pisahkan koma)"></div>
+<div class="form-group"><label>Peserta</label><div id="cat-peserta-container" style="position:relative"><div id="cat-peserta-display" onclick="togglePesertaDropdown()" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-height:38px;cursor:pointer;background:#fff">-- Pilih Peserta --</div><div id="cat-peserta-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:6px;max-height:200px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.15)"></div></div><input type="hidden" id="cat-peserta"></div>
 <div class="form-group"><label>Hasil/Temuan</label><textarea id="cat-hasil" placeholder="Hasil dan temuan"></textarea></div>
 <div class="form-group"><label>Tindak Lanjut</label><textarea id="cat-tindaklanjut" placeholder="Rencana tindak lanjut"></textarea></div>
 <div class="form-group"><label>Link Dokumentasi Foto</label><input id="cat-link" placeholder="https://..."></div>
@@ -1058,10 +1058,49 @@ let md=getMadrasahData();
 let selM=document.getElementById('cat-madrasah');
 selM.innerHTML='<option value="">-- Pilih Madrasah --</option>';
 md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+selM.addEventListener('change',function(){renderPesertaCheckboxes();});
 let selR=document.getElementById('cat-rhk');
 selR.innerHTML='<option value="">-- Pilih RHK --</option>';
 RHK_DATA.forEach(r=>{selR.innerHTML+='<option value="'+r.no+'">RHK '+r.no+' (TW'+r.tw+'): '+r.rhk.substring(0,50)+'...</option>';});
-selR.addEventListener('change',function(){let rhk=RHK_DATA.find(r=>r.no==this.value);if(rhk){document.getElementById('cat-kegiatan').value=rhk.aksi;}});
+selR.addEventListener('change',function(){let rhk=RHK_DATA.find(r=>r.no==this.value);if(rhk){document.getElementById('cat-kegiatan').value=rhk.aksi;document.getElementById('cat-hasil').value='Terlaksananya '+rhk.aksi.toLowerCase()+' di madrasah binaan sesuai dengan rencana yang telah disusun.';document.getElementById('cat-tindaklanjut').value='Melakukan monitoring dan evaluasi tindak lanjut dari hasil '+rhk.aksi.toLowerCase()+'.';}});
+renderPesertaCheckboxes();
+}
+function renderPesertaCheckboxes(){
+let mdIdx=document.getElementById('cat-madrasah').value;
+let md=getMadrasahData();
+let dropdown=document.getElementById('cat-peserta-dropdown');
+let names=[];
+if(mdIdx!==''){
+let m=md[parseInt(mdIdx)];
+if(m&&m.kepsek)names.push(m.kepsek);
+}else{
+md.forEach(m=>{if(m.kepsek&&names.indexOf(m.kepsek)===-1)names.push(m.kepsek);});
+}
+let html='';
+names.forEach((n,i)=>{
+html+='<label style="display:flex;align-items:center;padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f0f0f0;gap:8px" onmouseover="this.style.background=\'#f0f9ff\'" onmouseout="this.style.background=\'#fff\'">';
+html+='<input type="checkbox" value="'+n+'" onchange="updatePesertaSelection()" style="width:16px;height:16px;cursor:pointer"> '+n+'</label>';
+});
+if(!html)html='<p style="padding:10px;color:#999;font-size:12px;text-align:center">Pilih madrasah dulu</p>';
+dropdown.innerHTML=html;
+updatePesertaDisplay();
+}
+function togglePesertaDropdown(){
+let dd=document.getElementById('cat-peserta-dropdown');
+dd.style.display=dd.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',function(e){let container=document.getElementById('cat-peserta-container');if(container&&!container.contains(e.target)){document.getElementById('cat-peserta-dropdown').style.display='none';}});
+function updatePesertaSelection(){
+let checks=document.querySelectorAll('#cat-peserta-dropdown input[type=checkbox]:checked');
+let names=[];
+checks.forEach(c=>{names.push(c.value);});
+document.getElementById('cat-peserta').value=names.join(', ');
+updatePesertaDisplay();
+}
+function updatePesertaDisplay(){
+let val=document.getElementById('cat-peserta').value;
+let display=document.getElementById('cat-peserta-display');
+if(val){display.textContent=val;display.style.color='var(--text)';}else{display.textContent='-- Pilih Peserta --';display.style.color='#999';}
 }
 function showCatatanTW(tw){
 document.querySelectorAll('#page-catatan .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
