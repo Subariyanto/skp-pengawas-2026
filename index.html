@@ -84,6 +84,7 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
 <a href="#" onclick="showPage('eviden')"><span class="icon">&#128206;</span>Eviden</a>
 <a href="#" onclick="showPage('madrasah')"><span class="icon">&#127979;</span>Data Madrasah</a>
+<a href="#" onclick="showPage('guru')"><span class="icon">&#128104;</span>Data Guru</a>
 <a href="#" onclick="showPage('jadwal')"><span class="icon">&#128197;</span>Jadwal Pendampingan</a>
 <a href="#" onclick="showPage('catatan')"><span class="icon">&#128221;</span>Catatan Pendampingan</a>
 <a href="#" onclick="showPage('surat')"><span class="icon">&#128220;</span>Surat Keterangan</a>
@@ -297,6 +298,39 @@ tr:nth-child(even){background:#f8f9fa}
 </table>
 </div>
 </div>
+<!-- DATA GURU -->
+<div class="page" id="page-guru">
+<h2 style="margin-bottom:20px;color:var(--primary)">Data Guru</h2>
+<div class="card">
+<h3>Daftar Guru Madrasah Binaan</h3>
+<div class="btn-group">
+<button class="btn btn-success" onclick="showAddGuru()">&#10133; Tambah Guru</button>
+<button class="btn btn-primary" onclick="importExcelGuru()">📥 Import Excel</button>
+<input type="file" id="excel-guru-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelGuru(event)">
+</div>
+<div class="form-group" style="max-width:300px;margin-bottom:15px"><label>Filter Madrasah</label><select id="guru-filter-madrasah" onchange="renderGuru()" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option value="">-- Semua Madrasah --</option></select></div>
+<div id="add-guru-form" style="display:none;margin-bottom:15px;padding:15px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac">
+<h4 style="margin-bottom:10px;color:var(--secondary)" id="form-guru-title">Tambah Guru Baru</h4>
+<div class="form-grid">
+<div class="form-group"><label>Nama Guru</label><input id="gr-nama"></div>
+<div class="form-group"><label>Madrasah</label><select id="gr-madrasah"></select></div>
+<div class="form-group"><label>Mata Pelajaran</label><input id="gr-mapel" placeholder="Contoh: Matematika"></div>
+<div class="form-group"><label>No. HP</label><input id="gr-hp"></div>
+<div class="form-group"><label>NIP/NUPTK</label><input id="gr-nip" placeholder="Opsional"></div>
+<div class="form-group"><label>Status</label><select id="gr-status"><option value="PNS">PNS</option><option value="Non-PNS">Non-PNS</option><option value="Honorer">Honorer</option><option value="GTT">GTT</option></select></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="simpanGuru()">&#128190; Simpan</button>
+<button class="btn" style="background:#95a5a6;color:#fff" onclick="batalGuru()">Batal</button>
+</div>
+</div>
+<table id="tbl-guru">
+<thead><tr><th>No</th><th>Nama</th><th>Madrasah</th><th>Mapel</th><th>No. HP</th><th>NIP/NUPTK</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody id="tbody-guru"></tbody>
+</table>
+</div>
+</div>
+
 <!-- JADWAL PENDAMPINGAN -->
 <div class="page" id="page-jadwal">
 <h2 style="margin-bottom:20px;color:var(--primary)">Jadwal Pendampingan</h2>
@@ -480,6 +514,7 @@ if(id==='skp')showTW(1);
 if(id==='evaluasi')showEvalTW(1);
 if(id==='eviden')showEvidenTW(1);
 if(id==='madrasah')renderMadrasah();
+if(id==='guru'){initGuruFilter();renderGuru();}
 if(id==='periode')renderPeriodePage();
 if(id==='jadwal'){initJadwalDropdowns();showJadwalTW(1);}
 if(id==='catatan'){initCatatanDropdowns();showCatatanTW(1);}
@@ -1068,20 +1103,23 @@ renderPesertaCheckboxes();
 function renderPesertaCheckboxes(){
 let mdIdx=document.getElementById('cat-madrasah').value;
 let md=getMadrasahData();
+let guru=getGuruData();
 let dropdown=document.getElementById('cat-peserta-dropdown');
 let names=[];
 if(mdIdx!==''){
 let m=md[parseInt(mdIdx)];
-if(m&&m.kepsek)names.push(m.kepsek);
+if(m&&m.kepsek)names.push({nama:m.kepsek,role:'Kepala Madrasah'});
+guru.filter(g=>g.madrasahIdx==parseInt(mdIdx)).forEach(g=>{names.push({nama:g.nama,role:g.mapel||'Guru'});});
 }else{
-md.forEach(m=>{if(m.kepsek&&names.indexOf(m.kepsek)===-1)names.push(m.kepsek);});
+md.forEach(m=>{if(m.kepsek)names.push({nama:m.kepsek,role:'Kepala Madrasah'});});
+guru.forEach(g=>{names.push({nama:g.nama,role:g.mapel||'Guru'});});
 }
 let html='';
 names.forEach((n,i)=>{
 html+='<label style="display:flex;align-items:center;padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f0f0f0;gap:8px" onmouseover="this.style.background=\'#f0f9ff\'" onmouseout="this.style.background=\'#fff\'">';
-html+='<input type="checkbox" value="'+n+'" onchange="updatePesertaSelection()" style="width:16px;height:16px;cursor:pointer"> '+n+'</label>';
+html+='<input type="checkbox" value="'+n.nama+'" onchange="updatePesertaSelection()" style="width:16px;height:16px;cursor:pointer"> '+n.nama+' <span style="color:#999;font-size:10px">('+n.role+')</span></label>';
 });
-if(!html)html='<p style="padding:10px;color:#999;font-size:12px;text-align:center">Pilih madrasah dulu</p>';
+if(!html)html='<p style="padding:10px;color:#999;font-size:12px;text-align:center">Pilih madrasah dulu atau tambah data guru</p>';
 dropdown.innerHTML=html;
 updatePesertaDisplay();
 }
@@ -1390,6 +1428,96 @@ w.document.write(area.innerHTML);
 w.document.write('</body></html>');
 w.document.close();
 w.print();
+}
+
+
+// === DATA GURU ===
+let guruEditIndex=-1;
+function getGuruData(){return JSON.parse(localStorage.getItem(getKey('guru'))||'[]');}
+function saveGuruData(data){localStorage.setItem(getKey('guru'),JSON.stringify(data));}
+function initGuruFilter(){
+let md=getMadrasahData();
+let sel=document.getElementById('guru-filter-madrasah');
+sel.innerHTML='<option value="">-- Semua Madrasah --</option>';
+md.forEach((m,i)=>{sel.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+let selForm=document.getElementById('gr-madrasah');
+selForm.innerHTML='<option value="">-- Pilih Madrasah --</option>';
+md.forEach((m,i)=>{selForm.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+}
+function renderGuru(){
+let data=getGuruData();
+let filterIdx=document.getElementById('guru-filter-madrasah').value;
+if(filterIdx!=='')data=data.filter(g=>g.madrasahIdx==parseInt(filterIdx));
+let md=getMadrasahData();
+let html='';
+data.forEach((g,i)=>{
+let allData=getGuruData();
+let realIdx=allData.indexOf(g);
+let namaMd=md[g.madrasahIdx]?md[g.madrasahIdx].nama:'-';
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+g.nama+'</td><td style="font-size:11px">'+namaMd+'</td><td style="font-size:11px">'+g.mapel+'</td><td style="font-size:11px">'+g.hp+'</td><td style="font-size:11px">'+g.nip+'</td><td style="font-size:11px">'+g.status+'</td>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editGuru('+realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusGuru('+realIdx+')">&#128465;&#65039;</button></td></tr>';
+});
+if(!html)html='<tr><td colspan="8" style="text-align:center;color:#999">Belum ada data guru</td></tr>';
+document.getElementById('tbody-guru').innerHTML=html;
+}
+function showAddGuru(){
+guruEditIndex=-1;
+document.getElementById('form-guru-title').textContent='Tambah Guru Baru';
+document.getElementById('add-guru-form').style.display='block';
+['gr-nama','gr-mapel','gr-hp','gr-nip'].forEach(id=>{document.getElementById(id).value='';});
+document.getElementById('gr-madrasah').value='';
+document.getElementById('gr-status').value='PNS';
+}
+function editGuru(idx){
+let data=getGuruData();let g=data[idx];
+guruEditIndex=idx;
+document.getElementById('form-guru-title').textContent='Edit Guru';
+document.getElementById('add-guru-form').style.display='block';
+document.getElementById('gr-nama').value=g.nama||'';
+document.getElementById('gr-madrasah').value=g.madrasahIdx!=null?g.madrasahIdx:'';
+document.getElementById('gr-mapel').value=g.mapel||'';
+document.getElementById('gr-hp').value=g.hp||'';
+document.getElementById('gr-nip').value=g.nip||'';
+document.getElementById('gr-status').value=g.status||'PNS';
+}
+function batalGuru(){guruEditIndex=-1;document.getElementById('add-guru-form').style.display='none';}
+function simpanGuru(){
+let g={nama:document.getElementById('gr-nama').value,madrasahIdx:parseInt(document.getElementById('gr-madrasah').value),mapel:document.getElementById('gr-mapel').value,hp:document.getElementById('gr-hp').value,nip:document.getElementById('gr-nip').value,status:document.getElementById('gr-status').value};
+if(!g.nama){alert('Nama guru wajib diisi!');return;}
+if(isNaN(g.madrasahIdx)){alert('Pilih madrasah!');return;}
+let data=getGuruData();
+if(guruEditIndex>=0){data[guruEditIndex]=g;}else{data.push(g);}
+saveGuruData(data);
+guruEditIndex=-1;
+document.getElementById('add-guru-form').style.display='none';
+renderGuru();
+alert('Data guru berhasil disimpan!');
+}
+function hapusGuru(idx){
+if(!confirm('Hapus data guru ini?'))return;
+let data=getGuruData();data.splice(idx,1);saveGuruData(data);renderGuru();
+}
+function importExcelGuru(){document.getElementById('excel-guru-input').click();}
+function handleExcelGuru(event){
+let file=event.target.files[0];if(!file)return;
+let reader=new FileReader();
+reader.onload=function(e){
+try{
+let workbook=XLSX.read(e.target.result,{type:'array'});
+let sheet=workbook.Sheets[workbook.SheetNames[0]];
+let rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
+let data=getGuruData();let count=0;
+rows.forEach(row=>{
+let nama=row['NAMA']||row['Nama']||row['nama']||row['NAMA GURU']||row['nama guru']||'';
+if(!nama)return;
+let g={nama:String(nama).trim(),madrasahIdx:0,mapel:String(row['MAPEL']||row['Mapel']||row['mapel']||row['MATA PELAJARAN']||'').trim(),hp:String(row['NO. HP']||row['NO HP']||row['HP']||row['hp']||'').trim(),nip:String(row['NIP']||row['NUPTK']||row['nip']||'').trim(),status:String(row['STATUS']||row['status']||'Non-PNS').trim()};
+data.push(g);count++;
+});
+saveGuruData(data);renderGuru();
+alert('Berhasil import '+count+' data guru dari Excel!');
+}catch(err){alert('Gagal membaca file: '+err.message);}
+};
+reader.readAsArrayBuffer(file);event.target.value='';
 }
 
 // === INIT ===
