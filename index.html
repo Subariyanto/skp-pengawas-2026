@@ -1817,30 +1817,44 @@ w.document.close();w.print();
 function renderMatrik(){
 let atasanData=getAtasanData();
 let rhkAtasan=atasanData.rhk||[];
-let period=getActivePeriod();
+let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
+let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
+let jabatan=identitas['id-jabatan']||'Pengawas Madrasah';
+let ppNama=identitas['pp-nama']||'Dr. SANTOSO, S.Ag, M.Pd.';
+let ppJabatan=identitas['pp-jabatan']||'Kepala Kantor Kementerian Agama Kab. Jember';
 let html='';
 if(rhkAtasan.length===0){
 html='<p style="color:#999;text-align:center">Isi dulu RHK Atasan di menu SKP Atasan Langsung.</p>';
 }else{
-html='<table class="data-table"><thead><tr><th style="width:40px">No</th><th>RHK Atasan Langsung</th><th>RHK Pegawai (Pengawas)</th></tr></thead><tbody>';
-rhkAtasan.forEach((ra,i)=>{
+// Build matrix table
+html='<div style="overflow-x:auto"><table class="data-table" style="font-size:11px"><thead><tr><th style="width:30px">No</th><th style="width:120px">Pegawai</th><th style="width:120px">Jabatan</th>';
+rhkAtasan.forEach((ra,i)=>{html+='<th>RHK '+(i+1)+'</th>';});
+html+='</tr></thead><tbody>';
+// Row 1: Atasan
+html+='<tr style="background:#e8f4fd"><td>1</td><td><strong>'+ppNama+'</strong></td><td>'+ppJabatan+'</td>';
+rhkAtasan.forEach(ra=>{html+='<td>'+ra.rhk+'</td>';});
+html+='</tr>';
+// Row 2: Pegawai (Pengawas) - map RHK pegawai to atasan columns
+html+='<tr><td>2</td><td><strong>'+nama+'</strong></td><td>'+jabatan+'</td>';
+rhkAtasan.forEach(ra=>{
 let linked=RHK_DATA.filter(r=>r.rhkAtasan&&r.rhkAtasan.toLowerCase().includes(ra.rhk.substring(0,20).toLowerCase()));
-let pegawaiRHK=linked.length>0?linked.map(r=>'<li>RHK '+r.no+': '+r.rhk+'</li>').join(''):'<li style="color:#999">Belum ada RHK terkait</li>';
-html+='<tr><td style="text-align:center">'+(i+1)+'</td><td>'+ra.rhk+'</td><td><ul style="margin:0;padding-left:15px">'+pegawaiRHK+'</ul></td></tr>';
-});
-html+='</tbody></table>';
+if(linked.length>0){
+html+='<td>'+linked.map(r=>'<div style="margin-bottom:4px;padding:3px;background:#f0fdf4;border-radius:3px;font-size:10px">RHK '+r.no+': '+r.rhk+'</div>').join('')+'</td>';
+}else{
+html+='<td style="color:#999;font-style:italic">-</td>';
+}});
+html+='</tr>';
+html+='</tbody></table></div>';
 }
 document.getElementById('matrik-container').innerHTML=html;
 }
 function cetakMatrik(){
 let container=document.getElementById('matrik-container');
 let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
-let atasanData=getAtasanData();
 let tahun=getActivePeriod();
 let w=window.open('','','width=800,height=600');
-w.document.write('<html><head><title>Matrik Peran Hasil</title><style>@page{size:A4 landscape;margin:1in 1in 1in 1.2in}body{font-family:Times New Roman,serif;font-size:12px;padding:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px;font-size:11px}h3{text-align:center;margin-bottom:15px}ul{margin:0;padding-left:15px}</style></head><body>');
-w.document.write('<h3>MATRIKS PEMBAGIAN PERAN DAN HASIL<br>TAHUN '+tahun+'</h3>');
-w.document.write('<table style="margin-bottom:15px;border:none"><tr><td style="border:none;width:50%"><strong>Pejabat Penilai:</strong> '+(atasanData.nama||'-')+'</td><td style="border:none"><strong>Pegawai:</strong> '+(identitas['id-nama']||'-')+'</td></tr></table>');
+w.document.write('<html><head><title>Matrik Peran Hasil</title><style>@page{size:A4 landscape;margin:0.7in}body{font-family:Times New Roman,serif;font-size:11px;padding:10px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:5px;font-size:10px;vertical-align:top}h3{text-align:center;margin-bottom:15px}tr:first-child td{background:#e8f4fd}</style></head><body>');
+w.document.write('<h3>MATRIK PEMBAGIAN PERAN DAN HASIL<br>TAHUN '+tahun+'</h3>');
 w.document.write(container.innerHTML);
 w.document.write('</body></html>');
 w.document.close();w.print();
