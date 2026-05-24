@@ -1722,12 +1722,15 @@ function getAtasanData(){
 let data=JSON.parse(localStorage.getItem(getKey('skp-atasan'))||'null');
 if(!data){
 data={rhk:[
-{rhk:'Terwujudnya layanan pendidikan madrasah yang berkualitas',indikator:'Persentase madrasah yang memenuhi standar mutu pendidikan',target:'90%',perspektif:'Penerima Layanan'},
-{rhk:'Terwujudnya tata kelola madrasah yang efektif dan akuntabel',indikator:'Persentase madrasah yang menerapkan tata kelola sesuai standar',target:'85%',perspektif:'Penerima Layanan'},
-{rhk:'Terselenggaranya pembinaan dan pengawasan madrasah secara berkala',indikator:'Persentase pelaksanaan program pembinaan dan pengawasan',target:'90%',perspektif:'Proses Bisnis'},
-{rhk:'Meningkatnya kompetensi tenaga pendidik dan kependidikan madrasah',indikator:'Persentase pendidik dan tenaga kependidikan yang mengikuti pengembangan kompetensi',target:'85%',perspektif:'Proses Bisnis'},
-{rhk:'Terwujudnya penguatan kapasitas kelembagaan Kankemenag',indikator:'Persentase pencapaian target kinerja unit kerja',target:'90%',perspektif:'Penguatan Internal'},
-{rhk:'Meningkatnya akuntabilitas pengelolaan anggaran dan aset',indikator:'Persentase realisasi anggaran sesuai target',target:'85%',perspektif:'Penguatan Internal'}
+{rhk:'Meningkatnya jaminan beragama, toleransi, dan cinta kemanusiaan umat beragama',indikator:'IKI.1.1. Persentase KUA yang menyelenggarakan EWS; IKI.1.3. Persentase peningkatan audiens MTQ/PESPARAWI; IKI.1.4. Persentase peningkatan peserta event seni budaya',target:'90%; 37,5%; 9,1%',perspektif:'Penerima Layanan / Proses Bisnis'},
+{rhk:'Meningkatnya kualitas layanan keagamaan yang profesional, inklusif, dan berdampak',indikator:'IKI.2.1 s.d IKI.2.17 (Penyuluh agama, bimbingan perkawinan, rumah ibadah, halal, zakat, wakaf)',target:'94%; 100%; 0,62%; 18,4%; 10,2%; 1,5%; 15,5%; 12%; 7%; 27%; 4%; 16%; 8%; 12%',perspektif:'Penerima Layanan / Proses Bisnis / Penguatan Internal'},
+{rhk:'Meningkatnya akses dan penyelesaian pendidikan siswa satuan pendidikan keagamaan',indikator:'IKI.3.1. Persentase siswa/santri satuan pendidikan yang lulus dengan predikat sangat baik',target:'1,2%',perspektif:'Penerima Layanan'},
+{rhk:'Meningkatnya sarana dan prasarana satuan pendidikan keagamaan yang berkualitas',indikator:'IKI.4.1. Pendidikan inklusif; IKI.4.2. Anak kelas 1 pernah PAUD; IKI.4.3. Layanan kesehatan sekolah; IKI.4.4. Anak tidak sekolah ikut kesetaraan',target:'0,05%; 91%; 21%; 2595 anak',perspektif:'Penerima Layanan'},
+{rhk:'Meningkatnya layanan pendidikan yang berkualitas dan berorientasi kompetensi',indikator:'IKI.5.1 s.d IKI.5.10 (Asesmen kompetensi, rencana kerja, karakter, akreditasi, bilingual, kompetisi)',target:'59,5; 92%; 100%; 400; 26%; 82%; 49,2%; 3,5%; 0,42%; 0,55%',perspektif:'Penerima Layanan / Proses Bisnis'},
+{rhk:'Meningkatnya pemerataan guru dan tenaga kependidikan',indikator:'IKI.6.1. Sertifikat pendidik; IKI.6.2. Rasio guru:siswa; IKI.6.3. Kualifikasi tendik; IKI.6.4. Guru agama bersertifikat; IKI.6.5. Lulusan PPG; IKI.6.6. Rekomendasi pengadaan guru',target:'45,5%; 1:12; 41,5%; 91%; 45%; 51,44%',perspektif:'Penguatan Internal / Proses Bisnis'},
+{rhk:'Meningkatnya kualitas perencanaan dan anggaran',indikator:'IKI.7.1. Nilai Kinerja Anggaran',target:'95',perspektif:'Anggaran'},
+{rhk:'Meningkatnya kualitas penerapan Reformasi Birokrasi',indikator:'IKI.8.1. Persentase laporan kinerja satker sesuai standar; IKI.8.2. Nilai Pembangunan Zona Integritas di atas 75',target:'100%; 12%',perspektif:'Penguatan Internal'},
+{rhk:'Meningkatnya kualitas tata kelola keuangan dan BMN',indikator:'IKI.9.1. Nilai IKPA; IKI.9.2. Tindak lanjut pemeriksaan; IKI.9.3. Laporan Keuangan tepat waktu; IKI.9.4. PIPK; IKI.9.5. RKBMN tepat waktu',target:'95; 100%; 100%; 100%; 100%',perspektif:'Anggaran / Proses Bisnis / Penguatan Internal'}
 ]};
 saveAtasanData(data);
 }
