@@ -982,10 +982,8 @@ renderMadrasah();
 alert(madrasahEditIndex>=0?'Data madrasah berhasil diupdate!':'Data madrasah berhasil ditambahkan!');
 }
 function downloadTemplateMadrasah(){
-let headers=['nama','kepsek','hp','nsm','npsn','alamat','desa','kec'];
 let labels=['Nama Madrasah','Nama Kepala Madrasah','No. HP','NSM','NPSN','Alamat','Desa','Kecamatan'];
-let example=['MA Contoh','Ahmad, S.Pd','081234567890','131235090001','20580001','Jl. Raya No. 1','Sumbersari','Sumbersari'];
-let csvContent='\uFEFF'+labels.join(';')+'\n'+example.join(';')+'\n';
+let csvContent='\uFEFF'+labels.join(';')+'\n';
 let blob=new Blob([csvContent],{type:'application/vnd.ms-excel;charset=utf-8'});
 let url=URL.createObjectURL(blob);
 let a=document.createElement('a');
