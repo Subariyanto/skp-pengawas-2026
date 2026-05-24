@@ -14,6 +14,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sidebar nav a{display:flex;align-items:center;padding:12px 20px;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .2s}
 .sidebar nav a:hover,.sidebar nav a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--accent)}
 .sidebar nav a .icon{margin-right:10px;font-size:16px}
+.sidebar nav .nav-group-label{padding:10px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-top:8px}
 .sidebar .credit{padding:15px;font-size:10px;text-align:center;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);margin-top:auto;width:100%}
 .main{margin-left:var(--sidebar-w);flex:1;padding:20px;max-width:calc(100% - var(--sidebar-w))}
 .page{display:none}
@@ -79,6 +80,7 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('periode')"><span class="icon">&#128197;</span>Periode</a>
 <a href="#" class="active" onclick="showPage('dashboard')"><span class="icon">&#128202;</span>Dashboard</a>
 <a href="#" onclick="showPage('identitas')"><span class="icon">&#128100;</span>Data Identitas</a>
+<div class="nav-group-label">SKP Pengawas</div>
 <a href="#" onclick="showPage('skp')"><span class="icon">&#128203;</span>SKP / RHK</a>
 <a href="#" onclick="showPage('evaluasi')"><span class="icon">&#128200;</span>Evaluasi Kinerja</a>
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
