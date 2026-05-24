@@ -1376,7 +1376,7 @@ function cetakSurat(){
 let area=document.getElementById('surat-print-area');
 if(!area){alert('Generate surat terlebih dahulu!');return;}
 let w=window.open('','','width=800,height=600');
-w.document.write('<html><head><title>Cetak Surat Keterangan</title><style>body{font-family:Times New Roman,serif;padding:30px}table{border-collapse:collapse}td,th{padding:6px;font-size:12px}@media print{body{padding:0}}</style></head><body>');
+w.document.write('<html><head><title>Cetak Surat Keterangan</title><style>body{font-family:Times New Roman,serif;padding:30px}table{border-collapse:collapse;width:100%}td,th{padding:6px;font-size:12px;border:1px solid #000}@media print{body{padding:0}}</style></head><body>');
 w.document.write(area.innerHTML);
 w.document.write('</body></html>');
 w.document.close();
