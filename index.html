@@ -402,10 +402,10 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="form-grid">
 <div class="form-group"><label>Mode Generate</label><select id="surat-mode" onchange="updateSuratOptions()"><option value="madrasah">Per Madrasah</option><option value="triwulan">Per Triwulan</option></select></div>
 <div class="form-group" id="surat-madrasah-group"><label>Pilih Madrasah</label><select id="surat-madrasah"></select></div>
-<div class="form-group" id="surat-tw-group" style="display:none"><label>Pilih Triwulan</label><select id="surat-tw"><option value="1">Triwulan I</option><option value="2">Triwulan II</option><option value="3">Triwulan III</option><option value="4">Triwulan IV</option></select></div>
-<div class="form-group"><label>Nomor Surat</label><input id="surat-nomor" placeholder="B-xxx/Kk.13.09/Pw.01/05/2026"></div>
-<div class="form-group"><label>Perihal</label><input id="surat-perihal" value="Keterangan Melaksanakan Pendampingan"></div>
-<div class="form-group"><label>Tempat, Tanggal Surat</label><input id="surat-tempat" placeholder="Jember, 30 Maret 2026"></div>
+<div class="form-group" id="surat-tw-group" style="display:none"><label>Pilih Triwulan</label><select id="surat-tw" onchange="generateNomorSurat();generatePerihalSurat()"><option value="1">Triwulan I</option><option value="2">Triwulan II</option><option value="3">Triwulan III</option><option value="4">Triwulan IV</option></select></div>
+<div class="form-group"><label>Nomor Surat</label><input id="surat-nomor" readonly style="background:#f0f9ff"></div>
+<div class="form-group"><label>Perihal</label><input id="surat-perihal" value="Keterangan Melaksanakan Pendampingan" readonly style="background:#f0f9ff"></div>
+<div class="form-group"><label>Tempat, Tanggal Surat</label><input type="date" id="surat-tanggal"><input type="hidden" id="surat-tempat"></div>
 </div>
 <div class="btn-group">
 <button class="btn btn-primary" onclick="generateSurat()">&#128196; Generate Surat</button>
@@ -1204,13 +1204,58 @@ function initSuratDropdowns(){
 let md=getMadrasahData();
 let selM=document.getElementById('surat-madrasah');
 selM.innerHTML='<option value="">-- Pilih Madrasah --</option>';
-md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+m.nama+'</option>';});
+md.forEach((m,i)=>{selM.innerHTML+='<option value="'+i+'">'+(i+1)+'. '+m.nama+'</option>';});
+selM.addEventListener('change',function(){generateNomorSurat();generatePerihalSurat();});
 updateSuratOptions();
+let today=new Date().toISOString().split('T')[0];
+document.getElementById('surat-tanggal').value=today;
 }
 function updateSuratOptions(){
 let mode=document.getElementById('surat-mode').value;
 document.getElementById('surat-madrasah-group').style.display=mode==='madrasah'?'block':'none';
 document.getElementById('surat-tw-group').style.display=mode==='triwulan'?'block':'none';
+generateNomorSurat();
+generatePerihalSurat();
+}
+function generateNomorSurat(){
+let mode=document.getElementById('surat-mode').value;
+let suratList=getSuratData();
+let urut=suratList.length+1;
+let now=new Date();
+let bulan=String(now.getMonth()+1).padStart(2,'0');
+let tahun=now.getFullYear();
+let nomor='';
+if(mode==='madrasah'){
+let mdIdx=document.getElementById('surat-madrasah').value;
+if(mdIdx!==''){
+let nomorMd=parseInt(mdIdx)+1;
+nomor='B-'+String(nomorMd).padStart(3,'0')+'/Ma.13.09/Pw.01/'+bulan+'/'+tahun;
+}else{nomor='B-___/Ma.13.09/Pw.01/'+bulan+'/'+tahun;}
+}else{
+let tw=document.getElementById('surat-tw').value;
+nomor='B-'+String(urut).padStart(3,'0')+'/Kk.13.09/Pw.01/'+bulan+'/'+tahun;
+}
+document.getElementById('surat-nomor').value=nomor;
+}
+function generatePerihalSurat(){
+let mode=document.getElementById('surat-mode').value;
+let md=getMadrasahData();
+let perihal='Keterangan Melaksanakan Pendampingan';
+if(mode==='madrasah'){
+let mdIdx=document.getElementById('surat-madrasah').value;
+if(mdIdx!==''){let m=md[parseInt(mdIdx)];perihal='Keterangan Melaksanakan Pendampingan di '+m.nama;}
+}else{
+let tw=document.getElementById('surat-tw').value;
+perihal='Keterangan Melaksanakan Pendampingan Triwulan '+tw;
+}
+document.getElementById('surat-perihal').value=perihal;
+}
+function formatTanggalSurat(){
+let tgl=document.getElementById('surat-tanggal').value;
+if(!tgl)return 'Jember, ........................';
+let d=new Date(tgl);
+let bulanNama=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+return 'Jember, '+d.getDate()+' '+bulanNama[d.getMonth()]+' '+d.getFullYear();
 }
 function getSuratData(){return JSON.parse(localStorage.getItem(getKey('surat'))||'[]');}
 function saveSuratData(data){localStorage.setItem(getKey('surat'),JSON.stringify(data));}
@@ -1218,7 +1263,7 @@ function generateSurat(){
 let mode=document.getElementById('surat-mode').value;
 let nomor=document.getElementById('surat-nomor').value||'B-___/Kk.13.09/Pw.01/___/2026';
 let perihal=document.getElementById('surat-perihal').value;
-let tempat=document.getElementById('surat-tempat').value||'Jember, ........................';
+let tempat=formatTanggalSurat();
 let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
 let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
 let nip=identitas['id-nip']||'197002122005011004';
