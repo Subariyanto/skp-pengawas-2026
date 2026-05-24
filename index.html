@@ -1329,7 +1329,7 @@ html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><
 filtered.forEach((j,i)=>{kegiatanList='';kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+formatTgl(j.tanggal)+'</td><td>'+j.kegiatan+'</td></tr>';html+=kegiatanList;});
 html+='</tbody></table>';
 html+='<p style="margin-top:20px">Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>';
-html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p>'+tempat+'</p><p>Kepala '+namaMadrasah+',</p><br><br><p style="font-weight:bold;text-decoration:underline">'+kepsek+'</p><p>Kepala Madrasah</p></div>';
+html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">'+tempat+'</p><p style="margin:0">Kepala '+namaMadrasah+',</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+kepsek+'</p><p style="margin:0">Kepala Madrasah</p></div>';
 }else{
 html+='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:20px">';
 html+='<h3 style="margin:0;font-size:16px">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h3>';
@@ -1349,7 +1349,7 @@ html+='<tr><td style="border:none;padding:3px 0;width:120px">Unit Kerja</td><td 
 html+='<p>Telah melaksanakan kegiatan pendampingan pada madrasah binaan sebagai berikut:</p>';
 html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tanggal</th><th style="border:1px solid #000;padding:6px;font-size:12px">Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kegiatan</th></tr></thead><tbody>'+kegiatanList+'</tbody></table>';
 html+='<p style="margin-top:20px">Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>';
-html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p>'+tempat+'</p><p>'+ppJabatan+',</p><br><br><p style="font-weight:bold;text-decoration:underline">'+ppNama+'</p><p>NIP. '+ppNip+'</p></div>';
+html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">'+tempat+'</p><p style="margin:0">'+ppJabatan+',</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+ppNama+'</p><p style="margin:0">NIP. '+ppNip+'</p></div>';
 }
 html+='</div>';
 document.getElementById('surat-content').innerHTML=html;
