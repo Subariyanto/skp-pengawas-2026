@@ -295,6 +295,7 @@ tr:nth-child(even){background:#f8f9fa}
 <h3>Daftar Guru Madrasah Binaan</h3>
 <div class="btn-group">
 <button class="btn btn-success" onclick="showAddGuru()">&#10133; Tambah Guru</button>
+<button class="btn" onclick="downloadTemplateGuru()">&#128229; Template Excel</button>
 <button class="btn btn-primary" onclick="importExcelGuru()">📥 Import Excel</button>
 <input type="file" id="excel-guru-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelGuru(event)">
 </div>
@@ -1667,6 +1668,15 @@ alert('Data guru berhasil disimpan!');
 function hapusGuru(idx){
 if(!confirm('Hapus data guru ini?'))return;
 let data=getGuruData();data.splice(idx,1);saveGuruData(data);renderGuru();
+}
+function downloadTemplateGuru(){
+let labels=['Nama Guru','Madrasah','Mata Pelajaran','No. HP','NIP/NUPTK'];
+let csvContent='\uFEFF'+labels.join(';')+'\n';
+let blob=new Blob([csvContent],{type:'application/vnd.ms-excel;charset=utf-8'});
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a');
+a.href=url;a.download='template_data_guru.xls';a.click();
+URL.revokeObjectURL(url);
 }
 function importExcelGuru(){document.getElementById('excel-guru-input').click();}
 function handleExcelGuru(event){
