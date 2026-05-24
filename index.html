@@ -1013,6 +1013,7 @@ renderMadrasah();
 
 
 // === JADWAL PENDAMPINGAN ===
+function formatTgl(dateStr){if(!dateStr)return'-';let d=new Date(dateStr);let dd=String(d.getDate()).padStart(2,'0');let mm=String(d.getMonth()+1).padStart(2,'0');let yyyy=d.getFullYear();return dd+'-'+mm+'-'+yyyy;}
 let jadwalEditIndex=-1;
 function getJadwalData(){return JSON.parse(localStorage.getItem(getKey('jadwal'))||'[]');}
 function saveJadwalData(data){localStorage.setItem(getKey('jadwal'),JSON.stringify(data));}
@@ -1037,7 +1038,7 @@ data.forEach((d,i)=>{
 let j=d.item;
 let statusBadge=j.status==='Terlaksana'?'badge-sb':j.status==='Batal'?'badge-k':'badge-b';
 let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';
-html+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+j.rhkNo+'</td><td style="font-size:11px">'+j.kegiatan+'</td><td><span class="badge '+statusBadge+'">'+j.status+'</span></td>';
+html+='<tr><td>'+(i+1)+'</td><td>'+formatTgl(j.tanggal)+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+j.rhkNo+'</td><td style="font-size:11px">'+j.kegiatan+'</td><td><span class="badge '+statusBadge+'">'+j.status+'</span></td>';
 html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editJadwal('+d.realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusJadwal('+d.realIdx+')">&#128465;&#65039;</button></td></tr>';
 });
 if(!html)html='<tr><td colspan="7" style="text-align:center;color:#999">Belum ada jadwal di triwulan ini</td></tr>';
@@ -1151,7 +1152,7 @@ data.forEach((d,i)=>{
 let c=d.item;
 let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
 let fotoLink=c.link?'<a href="'+c.link+'" target="_blank" style="font-size:11px">&#128247; Lihat</a>':'-';
-html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+c.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+c.rhkNo+'</td><td style="font-size:11px">'+c.kegiatan+'</td><td style="font-size:11px">'+c.peserta+'</td><td style="font-size:11px">'+(c.hasil||'').substring(0,40)+'</td><td style="font-size:11px">'+(c.tindaklanjut||'').substring(0,40)+'</td><td>'+fotoLink+'</td>';
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+formatTgl(c.tanggal)+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+c.rhkNo+'</td><td style="font-size:11px">'+c.kegiatan+'</td><td style="font-size:11px">'+c.peserta+'</td><td style="font-size:11px">'+(c.hasil||'').substring(0,40)+'</td><td style="font-size:11px">'+(c.tindaklanjut||'').substring(0,40)+'</td><td>'+fotoLink+'</td>';
 html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editCatatan('+d.realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusCatatan('+d.realIdx+')">&#128465;&#65039;</button></td></tr>';
 });
 if(!html)html='<tr><td colspan="10" style="text-align:center;color:#999">Belum ada catatan di triwulan ini</td></tr>';
@@ -1298,7 +1299,7 @@ if(filtered.length===0){alert('Tidak ada jadwal berstatus Terlaksana untuk filte
 let kegiatanList='';
 filtered.forEach((j,i)=>{
 let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'';
-kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td>'+namaMd+'</td><td>'+j.kegiatan+'</td></tr>';
+kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+formatTgl(j.tanggal)+'</td><td>'+namaMd+'</td><td>'+j.kegiatan+'</td></tr>';
 });
 let html='<div style="font-family:Times New Roman,serif;padding:20px;line-height:1.8;font-size:14px" id="surat-print-area">';
 if(mode==='madrasah'){
@@ -1325,7 +1326,7 @@ html+='<tr><td style="border:none;padding:3px 10px 3px 0">Jabatan</td><td style=
 html+='<tr><td style="border:none;padding:3px 10px 3px 0">Unit Kerja</td><td style="border:none;padding:3px">: '+unit+'</td></tr></table>';
 html+='<p>Telah melaksanakan kegiatan pendampingan di '+namaMadrasah+' sebagai berikut:</p>';
 html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tanggal</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kegiatan</th></tr></thead><tbody>';
-filtered.forEach((j,i)=>{kegiatanList='';kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td>'+j.kegiatan+'</td></tr>';html+=kegiatanList;});
+filtered.forEach((j,i)=>{kegiatanList='';kegiatanList+='<tr><td>'+(i+1)+'</td><td>'+formatTgl(j.tanggal)+'</td><td>'+j.kegiatan+'</td></tr>';html+=kegiatanList;});
 html+='</tbody></table>';
 html+='<p style="margin-top:20px">Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>';
 html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p>'+tempat+'</p><p>Kepala '+namaMadrasah+',</p><br><br><br><p style="font-weight:bold;text-decoration:underline">'+kepsek+'</p><p>Kepala Madrasah</p></div>';
@@ -1418,7 +1419,7 @@ html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><
 jadwal.forEach((j,i)=>{
 let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';
 let statusBadge=j.status==='Terlaksana'?'color:#27ae60':j.status==='Batal'?'color:#e74c3c':'color:#2980b9';
-html+='<tr><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+(i+1)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+j.tanggal+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+namaMd+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+j.kegiatan+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px;font-weight:bold;'+statusBadge+'">'+j.status+'</td></tr>';
+html+='<tr><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+(i+1)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+formatTgl(j.tanggal)+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+namaMd+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px">'+j.kegiatan+'</td><td style="border:1px solid #ddd;padding:6px;font-size:11px;font-weight:bold;'+statusBadge+'">'+j.status+'</td></tr>';
 });
 html+='</tbody></table>';
 }else{html+='<p style="color:#999;font-style:italic">Belum ada jadwal pendampingan untuk RHK ini.</p>';}
@@ -1427,7 +1428,7 @@ if(catatan.length>0){
 catatan.forEach((c,i)=>{
 let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
 html+='<div style="background:#f8f9fa;padding:12px;border-radius:6px;margin:10px 0;border-left:4px solid var(--primary)">';
-html+='<p><strong>'+(i+1)+'. '+namaMd+' - '+c.tanggal+'</strong></p>';
+html+='<p><strong>'+(i+1)+'. '+namaMd+' - '+formatTgl(c.tanggal)+'</strong></p>';
 html+='<p><strong>Kegiatan:</strong> '+c.kegiatan+'</p>';
 html+='<p><strong>Peserta:</strong> '+c.peserta+'</p>';
 html+='<p><strong>Hasil/Temuan:</strong> '+c.hasil+'</p>';
@@ -1455,7 +1456,7 @@ catatan.forEach(c=>{
 if(c.peserta){
 let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
 c.peserta.split(',').forEach(p=>{
-if(p.trim())allPeserta.push({nama:p.trim(),madrasah:namaMd,tanggal:c.tanggal,kegiatan:c.kegiatan});
+if(p.trim())allPeserta.push({nama:p.trim(),madrasah:namaMd,tanggal:formatTgl(c.tanggal),kegiatan:c.kegiatan});
 });
 }
 });
