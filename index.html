@@ -16,7 +16,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sidebar nav a .icon{margin-right:10px;font-size:16px}
 .sidebar nav .nav-group-label{padding:10px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-top:8px}
 .sidebar .credit{padding:15px;font-size:10px;text-align:center;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);margin-top:auto;width:100%}
-#matrik-container th{position:relative;overflow:hidden}#matrik-container th .col-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;background:transparent}#matrik-container th .col-resize:hover{background:rgba(0,0,0,.2)}
+#matrik-container th{position:relative;overflow:hidden}#matrik-container th .col-resize,#skp-table-container th .col-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;background:transparent}#matrik-container th .col-resize:hover,#skp-table-container th .col-resize:hover{background:rgba(0,0,0,.2)}#skp-table-container th{position:relative;overflow:hidden}
 .main{margin-left:var(--sidebar-w);flex:1;padding:20px;max-width:calc(100% - var(--sidebar-w))}
 .page{display:none}
 .page.active{display:block}
@@ -619,15 +619,31 @@ loadRHKFromStorage();
 document.querySelectorAll('#page-skp .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
 let items=RHK_DATA.filter(r=>r.tw===tw);
 let saved=JSON.parse(localStorage.getItem(getKey('links'))||'{}');
-let html='<table><thead><tr><th>No</th><th>RHK Atasan</th><th>Rencana Hasil Kerja</th><th>Aspek</th><th>IKI</th><th>Target</th><th>Rencana Aksi</th><th>Bukti Dukung</th><th>Link</th></tr></thead><tbody>';
+let html='<div style="overflow-x:auto"><table style="table-layout:fixed;min-width:1200px"><thead><tr><th style="width:40px">No<span class="col-resize"></span></th><th style="min-width:130px">RHK Atasan<span class="col-resize"></span></th><th style="min-width:180px">Rencana Hasil Kerja<span class="col-resize"></span></th><th style="width:70px">Aspek<span class="col-resize"></span></th><th style="min-width:130px">IKI<span class="col-resize"></span></th><th style="width:70px">Target<span class="col-resize"></span></th><th style="min-width:150px">Rencana Aksi<span class="col-resize"></span></th><th style="min-width:130px">Bukti Dukung<span class="col-resize"></span></th><th style="min-width:180px">Link<span class="col-resize"></span></th></tr></thead><tbody>';
 items.forEach(r=>{
 let linkVal=saved['link-'+r.no]||r.link||'';
 let linkHtml='<div style="display:flex;align-items:center;gap:4px"><input id="link-input-'+r.no+'" style="flex:1;font-size:9px;padding:4px;border:1px solid #ddd;border-radius:4px;color:#1a5276;cursor:'+(linkVal?'pointer':'text')+'" value="'+(linkVal||'')+'" onclick="if(this.readOnly&&this.value)window.open(this.value,\'_blank\')" placeholder="Paste link..." '+(linkVal?'readonly':'')+' onblur="if(!this.readOnly){saveLink('+r.no+',this.value);this.readOnly=true;this.style.cursor=\'pointer\'}"><button title="Edit link" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="var el=document.getElementById(\'link-input-'+r.no+'\');el.readOnly=false;el.style.cursor=\'text\';el.focus();">\u270f\ufe0f</button></div>';
 html+='<tr><td rowspan="2">'+r.no+'</td><td rowspan="2" style="max-width:150px;font-size:11px">'+r.rhkAtasan+'</td><td rowspan="2" style="max-width:200px;font-size:11px">'+r.rhk+'</td><td>Kuantitas</td><td style="font-size:11px">'+r.aspekK+'</td><td>'+r.targetK+'</td><td rowspan="2" style="font-size:11px">'+r.aksi+'</td><td rowspan="2" style="font-size:11px">'+r.bukti+'</td><td rowspan="2" style="min-width:180px">'+linkHtml+'</td></tr>';
 html+='<tr><td>Waktu</td><td style="font-size:11px">'+r.aspekW+'</td><td>'+r.targetW+'</td></tr>';
 });
-html+='</tbody></table>';
+html+='</tbody></table></div>';
 document.getElementById('skp-table-container').innerHTML=html;
+initSkpColResize();
+}
+function initSkpColResize(){
+let handles=document.querySelectorAll('#skp-table-container .col-resize');
+handles.forEach(handle=>{
+handle.addEventListener('mousedown',function(e){
+e.preventDefault();
+let th=this.parentElement;
+let startX=e.pageX;
+let startW=th.offsetWidth;
+function onMove(ev){th.style.width=(startW+(ev.pageX-startX))+'px';th.style.minWidth=(startW+(ev.pageX-startX))+'px';}
+function onUp(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);}
+document.addEventListener('mousemove',onMove);
+document.addEventListener('mouseup',onUp);
+});
+});
 }
 function saveLink(no,val){let d=JSON.parse(localStorage.getItem(getKey('links'))||'{}');d['link-'+no]=val;localStorage.setItem(getKey('links'),JSON.stringify(d));}
 function saveSKP(){alert('Data SKP tersimpan!');}
