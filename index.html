@@ -88,6 +88,7 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('catatan')"><span class="icon">&#128221;</span>Catatan Pendampingan</a>
 <a href="#" onclick="showPage('surat')"><span class="icon">&#128220;</span>Surat Keterangan</a>
 <a href="#" onclick="showPage('gen-eviden')"><span class="icon">&#128194;</span>Generator Eviden RHK</a>
+<a href="#" onclick="showPage('laporan')"><span class="icon">&#128214;</span>Laporan Triwulan</a>
 <a href="#" onclick="showPage('kuadran')"><span class="icon">&#128208;</span>Kuadran & Distribusi</a>
 </nav>
 <div class="credit">Dibuat oleh: Subariyanto<br>Ketua Pokjawas Kemenag Kab. Jember</div>
@@ -434,6 +435,24 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 </div>
 
+<!-- LAPORAN TRIWULAN -->
+<div class="page" id="page-laporan">
+<h2 style="margin-bottom:20px;color:var(--primary)">Laporan Triwulan</h2>
+<div class="card">
+<h3>Generate Laporan</h3>
+<div class="form-grid">
+<div class="form-group"><label>Pilih Triwulan</label><select id="lap-tw"><option value="1">Triwulan I</option><option value="2">Triwulan II</option><option value="3">Triwulan III</option><option value="4">Triwulan IV</option></select></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="generateLaporan()">&#128214; Generate Laporan</button>
+<button class="btn btn-print" onclick="cetakLaporan()">&#128424; Cetak Laporan</button>
+</div>
+</div>
+<div class="card" id="laporan-preview" style="display:none">
+<div id="laporan-content"></div>
+</div>
+</div>
+
 <!-- KUADRAN -->
 <div class="page" id="page-kuadran">
 <h2 style="margin-bottom:20px;color:var(--primary)">Kuadran Kinerja & Pola Distribusi</h2>
@@ -514,6 +533,7 @@ if(id==='jadwal'){initJadwalDropdowns();showJadwalTW(1);}
 if(id==='catatan'){initCatatanDropdowns();showCatatanTW(1);}
 if(id==='surat'){initSuratDropdowns();renderRiwayatSurat();}
 if(id==='gen-eviden')initGenEvidenDropdown();
+if(id==='laporan'){}
 }
 
 // === DASHBOARD ===
@@ -1656,6 +1676,163 @@ alert('Berhasil import '+count+' data guru dari Excel!');
 }catch(err){alert('Gagal membaca file: '+err.message);}
 };
 reader.readAsArrayBuffer(file);event.target.value='';
+}
+
+
+// === LAPORAN TRIWULAN ===
+function generateLaporan(){
+let tw=parseInt(document.getElementById('lap-tw').value);
+let rhkTW=RHK_DATA.filter(r=>r.tw===tw);
+let jadwal=getJadwalData().filter(j=>{let m=new Date(j.tanggal).getMonth();let t=m<3?1:m<6?2:m<9?3:4;return t===tw;});
+let catatan=getCatatanData().filter(c=>{let m=new Date(c.tanggal).getMonth();let t=m<3?1:m<6?2:m<9?3:4;return t===tw;});
+let md=getMadrasahData();
+let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
+let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
+let nip=identitas['id-nip']||'197002122005011004';
+let jbt=identitas['id-jabatan']||'Pengawas Madrasah Madya Tingkat Menengah Pada MA';
+let unit=identitas['id-unit']||'Kantor Kementerian Agama Kab. Jember';
+let ppNama=identitas['pp-nama']||'Dr. SANTOSO, S.Ag, M.Pd.';
+let ppNip=identitas['pp-nip']||'196908251991031003';
+let ppJabatan=identitas['pp-jabatan']||'Kepala Kantor Kementerian Agama Kab. Jember';
+let tahun=getActivePeriod();
+let twLabel=['','Januari - Maret','April - Juni','Juli - September','Oktober - Desember'];
+let terlaksana=jadwal.filter(j=>j.status==='Terlaksana');
+let ps='page-break-before:always';
+let html='<div id="laporan-print-area" style="font-family:Times New Roman,serif;font-size:14px;line-height:2">';
+// COVER
+html+='<div style="text-align:center;padding:60px 40px;min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center">';
+html+='<p style="font-size:16px;font-weight:bold;margin-bottom:40px">LAPORAN</p>';
+html+='<p style="font-size:18px;font-weight:bold;margin-bottom:10px">PELAKSANAAN PENDAMPINGAN</p>';
+html+='<p style="font-size:18px;font-weight:bold;margin-bottom:10px">PENGAWAS MADRASAH</p>';
+html+='<p style="font-size:16px;font-weight:bold;margin-bottom:40px">TRIWULAN '+tw+' ('+twLabel[tw]+')</p>';
+html+='<p style="font-size:14px;margin-bottom:5px">Disusun oleh:</p>';
+html+='<p style="font-size:16px;font-weight:bold;margin-bottom:5px">'+nama+'</p>';
+html+='<p style="font-size:14px;margin-bottom:5px">NIP. '+nip+'</p>';
+html+='<p style="font-size:14px;margin-bottom:60px">'+jbt+'</p>';
+html+='<p style="font-size:14px;font-weight:bold;margin-bottom:5px">KEMENTERIAN AGAMA KABUPATEN JEMBER</p>';
+html+='<p style="font-size:14px">TAHUN '+tahun+'</p>';
+html+='</div>';
+// KATA PENGANTAR
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">KATA PENGANTAR</h3>';
+html+='<p style="text-indent:40px">Puji syukur kehadirat Allah SWT yang telah melimpahkan rahmat dan hidayah-Nya sehingga Laporan Pelaksanaan Pendampingan Pengawas Madrasah Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+' ini dapat disusun dengan baik.</p>';
+html+='<p style="text-indent:40px">Laporan ini disusun sebagai bentuk pertanggungjawaban pelaksanaan tugas pengawasan dan pendampingan pada madrasah binaan di wilayah Kabupaten Jember. Laporan ini memuat kegiatan-kegiatan yang telah dilaksanakan selama Triwulan '+tw+' meliputi '+rhkTW.length+' Rencana Hasil Kerja (RHK) yang telah ditetapkan.</p>';
+html+='<p style="text-indent:40px">Penulis menyadari bahwa laporan ini masih jauh dari sempurna. Oleh karena itu, saran dan masukan yang konstruktif sangat diharapkan demi perbaikan di masa mendatang.</p>';
+html+='<p style="text-indent:40px">Semoga laporan ini dapat bermanfaat bagi peningkatan mutu pendidikan di madrasah binaan.</p>';
+html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">Jember, .................... '+tahun+'</p><p style="margin:0">Penyusun,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div>';
+html+='</div>';
+// HALAMAN PENGESAHAN
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">HALAMAN PENGESAHAN</h3>';
+html+='<p style="text-indent:40px">Laporan Pelaksanaan Pendampingan Pengawas Madrasah Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+' ini disusun oleh:</p>';
+html+='<table style="margin:15px 0 15px 30px;border:none"><tr><td style="border:none;padding:3px 0;width:140px">Nama</td><td style="border:none;padding:3px">: '+nama+'</td></tr><tr><td style="border:none;padding:3px 0">NIP</td><td style="border:none;padding:3px">: '+nip+'</td></tr><tr><td style="border:none;padding:3px 0">Jabatan</td><td style="border:none;padding:3px">: '+jbt+'</td></tr><tr><td style="border:none;padding:3px 0">Unit Kerja</td><td style="border:none;padding:3px">: '+unit+'</td></tr></table>';
+html+='<p>Telah diperiksa dan disahkan untuk digunakan sebagaimana mestinya.</p>';
+html+='<div style="display:flex;justify-content:space-between;margin-top:50px"><div style="text-align:center;width:45%"><p style="margin:0">Penyusun,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div><div style="text-align:center;width:45%"><p style="margin:0">Mengesahkan,</p><p style="margin:0">'+ppJabatan+'</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+ppNama+'</p><p style="margin:0">NIP. '+ppNip+'</p></div></div>';
+html+='</div>';
+// DAFTAR ISI
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">DAFTAR ISI</h3>';
+html+='<table style="width:100%;border:none"><tr><td style="border:none;padding:5px 0">COVER</td><td style="border:none;text-align:right;padding:5px 0">i</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0">KATA PENGANTAR</td><td style="border:none;text-align:right;padding:5px 0">ii</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0">HALAMAN PENGESAHAN</td><td style="border:none;text-align:right;padding:5px 0">iii</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0">DAFTAR ISI</td><td style="border:none;text-align:right;padding:5px 0">iv</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">BAB I PENDAHULUAN</td><td style="border:none;text-align:right;padding:5px 0">1</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">A. Latar Belakang</td><td style="border:none;text-align:right;padding:5px 0">1</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">B. Dasar Hukum</td><td style="border:none;text-align:right;padding:5px 0">1</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">C. Tujuan</td><td style="border:none;text-align:right;padding:5px 0">2</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">D. Sasaran</td><td style="border:none;text-align:right;padding:5px 0">2</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">BAB II PELAKSANAAN KEGIATAN</td><td style="border:none;text-align:right;padding:5px 0">3</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">A. Jadwal Pelaksanaan</td><td style="border:none;text-align:right;padding:5px 0">3</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">B. Rincian Kegiatan Per RHK</td><td style="border:none;text-align:right;padding:5px 0">4</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">BAB III HASIL DAN PEMBAHASAN</td><td style="border:none;text-align:right;padding:5px 0">5</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">A. Hasil Pendampingan</td><td style="border:none;text-align:right;padding:5px 0">5</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">B. Pembahasan</td><td style="border:none;text-align:right;padding:5px 0">6</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">BAB IV PENUTUP</td><td style="border:none;text-align:right;padding:5px 0">7</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">A. Kesimpulan</td><td style="border:none;text-align:right;padding:5px 0">7</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">B. Saran</td><td style="border:none;text-align:right;padding:5px 0">7</td></tr>';
+html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">DAFTAR LAMPIRAN</td><td style="border:none;text-align:right;padding:5px 0">8</td></tr>';
+html+='</table></div>';
+// BAB I
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">BAB I<br>PENDAHULUAN</h3>';
+html+='<h4>A. Latar Belakang</h4>';
+html+='<p style="text-indent:40px">Pengawas Madrasah memiliki peran strategis dalam meningkatkan mutu pendidikan di madrasah binaan. Sesuai dengan Peraturan Menteri PAN-RB Nomor 6 Tahun 2022 tentang Pengelolaan Kinerja Pegawai dan Perdirjen GTK Nomor 7328 Tahun 2023, setiap pengawas wajib menyusun Sasaran Kinerja Pegawai (SKP) dan melaksanakan pendampingan sesuai Rencana Hasil Kerja (RHK) yang telah ditetapkan.</p>';
+html+='<p style="text-indent:40px">Pada Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+', telah ditetapkan '+rhkTW.length+' RHK yang harus dicapai melalui kegiatan pendampingan pada '+md.length+' madrasah binaan di wilayah KKMA 04 Kabupaten Jember.</p>';
+html+='<h4>B. Dasar Hukum</h4>';
+html+='<ol><li>Undang-Undang Nomor 20 Tahun 2003 tentang Sistem Pendidikan Nasional</li><li>Peraturan Pemerintah Nomor 19 Tahun 2005 tentang Standar Nasional Pendidikan</li><li>Peraturan Menteri PAN-RB Nomor 6 Tahun 2022 tentang Pengelolaan Kinerja Pegawai</li><li>Perdirjen GTK Nomor 7328 Tahun 2023 tentang Petunjuk Teknis SKP Pengawas</li><li>SK Penugasan Pengawas Madrasah Tahun '+tahun+'</li></ol>';
+html+='<h4>C. Tujuan</h4>';
+html+='<ol><li>Melaporkan pelaksanaan kegiatan pendampingan Triwulan '+tw+'</li><li>Mendeskripsikan capaian target RHK yang telah ditetapkan</li><li>Mengidentifikasi kendala dan solusi dalam pelaksanaan pendampingan</li><li>Memberikan rekomendasi untuk perbaikan pada triwulan berikutnya</li></ol>';
+html+='<h4>D. Sasaran</h4>';
+html+='<p style="text-indent:40px">Sasaran pendampingan pada Triwulan '+tw+' meliputi '+md.length+' Madrasah Aliyah Swasta binaan di wilayah KKMA 04 Kabupaten Jember, dengan rincian:</p>';
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Nama Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kepala Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kecamatan</th></tr></thead><tbody>';
+md.forEach((m,i)=>{html+='<tr><td style="border:1px solid #000;padding:4px;font-size:12px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.nama+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.kepsek+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.kec+'</td></tr>';});
+html+='</tbody></table></div>';
+// BAB II
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">BAB II<br>PELAKSANAAN KEGIATAN</h3>';
+html+='<h4>A. Jadwal Pelaksanaan</h4>';
+html+='<p style="text-indent:40px">Berikut jadwal pelaksanaan pendampingan pada Triwulan '+tw+':</p>';
+if(jadwal.length>0){
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tanggal</th><th style="border:1px solid #000;padding:6px;font-size:12px">Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kegiatan</th><th style="border:1px solid #000;padding:6px;font-size:12px">Status</th></tr></thead><tbody>';
+jadwal.forEach((j,i)=>{let nm=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';html+='<tr><td style="border:1px solid #000;padding:4px;font-size:12px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+formatTgl(j.tanggal)+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+nm+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+j.kegiatan+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+j.status+'</td></tr>';});
+html+='</tbody></table>';
+}else{html+='<p><em>Belum ada data jadwal untuk triwulan ini.</em></p>';}
+html+='<h4>B. Rincian Kegiatan Per RHK</h4>';
+rhkTW.forEach((r,i)=>{
+html+='<p><strong>'+(i+1)+'. RHK '+r.no+': '+r.rhk+'</strong></p>';
+html+='<ul><li>Target Kuantitas: '+r.aspekK+' = '+r.targetK+'</li><li>Target Waktu: '+r.aspekW+' = '+r.targetW+'</li><li>Rencana Aksi: '+r.aksi+'</li><li>Bukti Dukung: '+r.bukti+'</li></ul>';
+});
+html+='</div>';
+// BAB III
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">BAB III<br>HASIL DAN PEMBAHASAN</h3>';
+html+='<h4>A. Hasil Pendampingan</h4>';
+html+='<p style="text-indent:40px">Berdasarkan pelaksanaan pendampingan pada Triwulan '+tw+', berikut hasil yang telah dicapai:</p>';
+if(catatan.length>0){
+html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><tr><th style="border:1px solid #000;padding:6px;font-size:12px">No</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tanggal</th><th style="border:1px solid #000;padding:6px;font-size:12px">Madrasah</th><th style="border:1px solid #000;padding:6px;font-size:12px">Kegiatan</th><th style="border:1px solid #000;padding:6px;font-size:12px">Hasil/Temuan</th><th style="border:1px solid #000;padding:6px;font-size:12px">Tindak Lanjut</th></tr></thead><tbody>';
+catatan.forEach((c,i)=>{let nm=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';html+='<tr><td style="border:1px solid #000;padding:4px;font-size:11px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #000;padding:4px;font-size:11px">'+formatTgl(c.tanggal)+'</td><td style="border:1px solid #000;padding:4px;font-size:11px">'+nm+'</td><td style="border:1px solid #000;padding:4px;font-size:11px">'+c.kegiatan+'</td><td style="border:1px solid #000;padding:4px;font-size:11px">'+c.hasil+'</td><td style="border:1px solid #000;padding:4px;font-size:11px">'+c.tindaklanjut+'</td></tr>';});
+html+='</tbody></table>';
+}else{html+='<p><em>Belum ada data catatan pendampingan.</em></p>';}
+html+='<h4>B. Pembahasan</h4>';
+html+='<p style="text-indent:40px">Dari '+rhkTW.length+' RHK yang ditetapkan pada Triwulan '+tw+', telah dilaksanakan '+terlaksana.length+' kegiatan pendampingan dengan '+catatan.length+' catatan pelaksanaan. Secara umum, pelaksanaan pendampingan berjalan sesuai dengan rencana yang telah disusun.</p>';
+html+='<p style="text-indent:40px">Beberapa hal yang perlu diperhatikan:</p>';
+html+='<ol><li>Koordinasi dengan kepala madrasah berjalan dengan baik</li><li>Partisipasi guru dalam kegiatan pendampingan cukup aktif</li><li>Diperlukan tindak lanjut yang konsisten untuk memastikan keberlanjutan program</li></ol>';
+html+='</div>';
+// BAB IV
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">BAB IV<br>PENUTUP</h3>';
+html+='<h4>A. Kesimpulan</h4>';
+html+='<ol><li>Pelaksanaan pendampingan Triwulan '+tw+' telah berjalan sesuai dengan program yang telah disusun</li><li>Dari '+rhkTW.length+' RHK yang ditetapkan, seluruhnya telah dilaksanakan melalui kegiatan pendampingan pada madrasah binaan</li><li>Terdapat '+terlaksana.length+' jadwal pendampingan yang berstatus terlaksana</li><li>Hasil pendampingan menunjukkan adanya peningkatan mutu pengelolaan madrasah binaan</li></ol>';
+html+='<h4>B. Saran</h4>';
+html+='<ol><li>Perlu peningkatan intensitas pendampingan pada madrasah yang masih memerlukan pembinaan lebih lanjut</li><li>Koordinasi dengan stakeholder perlu ditingkatkan untuk mendukung program pendampingan</li><li>Diperlukan dukungan anggaran dan sarana yang memadai untuk optimalisasi pelaksanaan tugas</li><li>Perlu dilakukan evaluasi berkala terhadap dampak pendampingan yang telah dilaksanakan</li></ol>';
+html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">Jember, .................... '+tahun+'</p><p style="margin:0">Pengawas Madrasah,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div>';
+html+='</div>';
+// DAFTAR LAMPIRAN
+html+='<div style="'+ps+'">';
+html+='<h3 style="text-align:center;margin-bottom:20px">DAFTAR LAMPIRAN</h3>';
+html+='<table style="width:100%;border:none">';
+let lampNo=1;
+rhkTW.forEach(r=>{
+html+='<tr><td style="border:none;padding:5px 0">Lampiran '+lampNo+'. Eviden RHK '+r.no+' - '+r.rhk.substring(0,50)+'...</td></tr>';lampNo++;
+});
+html+='<tr><td style="border:none;padding:5px 0">Lampiran '+lampNo+'. Daftar Hadir Peserta Pendampingan</td></tr>';lampNo++;
+html+='<tr><td style="border:none;padding:5px 0">Lampiran '+lampNo+'. Surat Keterangan Pelaksanaan Pendampingan</td></tr>';lampNo++;
+html+='<tr><td style="border:none;padding:5px 0">Lampiran '+lampNo+'. Dokumentasi Kegiatan</td></tr>';lampNo++;
+html+='<tr><td style="border:none;padding:5px 0">Lampiran '+lampNo+'. Instrumen Pendampingan</td></tr>';
+html+='</table></div>';
+html+='</div>';
+document.getElementById('laporan-content').innerHTML=html;
+document.getElementById('laporan-preview').style.display='block';
+}
+function cetakLaporan(){
+let area=document.getElementById('laporan-print-area');
+if(!area){alert('Generate laporan terlebih dahulu!');return;}
+let w=window.open('','','width=800,height=600');
+w.document.write('<html><head><title>Cetak Laporan Triwulan</title><style>body{font-family:Times New Roman,serif;padding:30px;font-size:14px;line-height:2}table{border-collapse:collapse;width:100%}td,th{padding:5px;font-size:12px}h3{margin:15px 0}h4{margin:10px 0}ol,ul{margin:5px 0 10px 20px}@media print{body{padding:20px}div[style*="page-break"]{page-break-before:always}}</style></head><body>');
+w.document.write(area.innerHTML);
+w.document.write('</body></html>');
+w.document.close();
+w.print();
 }
 
 // === INIT ===
