@@ -182,13 +182,9 @@ tr:nth-child(even){background:#f8f9fa}
 <div class="page" id="page-skp-atasan">
 <h2 style="margin-bottom:20px;color:var(--primary)">SKP Atasan Langsung</h2>
 <div class="card">
-<h3>Sasaran Kinerja Pegawai - Pejabat Penilai Kinerja</h3>
-<div class="form-grid">
-<div class="form-group"><label>Nama Atasan</label><input id="atasan-nama" onchange="saveAtasan()"></div>
-<div class="form-group"><label>NIP</label><input id="atasan-nip" onchange="saveAtasan()"></div>
-<div class="form-group"><label>Jabatan</label><input id="atasan-jabatan" onchange="saveAtasan()"></div>
-<div class="form-group"><label>Unit Kerja</label><input id="atasan-unit" onchange="saveAtasan()"></div>
-</div>
+<h3>Data Pejabat Penilai Kinerja</h3>
+<p style="font-size:13px;color:#666;margin-bottom:10px">Data diambil otomatis dari menu Data Identitas (Pejabat Penilai Kinerja)</p>
+<div id="atasan-info"></div>
 </div>
 <div class="card">
 <h3>Rencana Hasil Kerja Atasan</h3>
@@ -1717,22 +1713,12 @@ reader.readAsArrayBuffer(file);event.target.value='';
 
 
 // === SKP ATASAN LANGSUNG ===
-function getAtasanData(){return JSON.parse(localStorage.getItem(getKey('skp-atasan'))||'{"rhk:[]}');}
+function getAtasanData(){return JSON.parse(localStorage.getItem(getKey('skp-atasan'))||'{"rhk":[]}');}
 function saveAtasanData(data){localStorage.setItem(getKey('skp-atasan'),JSON.stringify(data));}
-function saveAtasan(){
-let data=getAtasanData();
-data.nama=document.getElementById('atasan-nama').value;
-data.nip=document.getElementById('atasan-nip').value;
-data.jabatan=document.getElementById('atasan-jabatan').value;
-data.unit=document.getElementById('atasan-unit').value;
-saveAtasanData(data);
-}
 function loadAtasan(){
-let data=getAtasanData();
-document.getElementById('atasan-nama').value=data.nama||'';
-document.getElementById('atasan-nip').value=data.nip||'';
-document.getElementById('atasan-jabatan').value=data.jabatan||'';
-document.getElementById('atasan-unit').value=data.unit||'';
+let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
+let info='<table style="border:none"><tr><td style="border:none;padding:3px 0;width:120px">Nama</td><td style="border:none;padding:3px">: '+(identitas['pp-nama']||'-')+'</td></tr><tr><td style="border:none;padding:3px 0">NIP</td><td style="border:none;padding:3px">: '+(identitas['pp-nip']||'-')+'</td></tr><tr><td style="border:none;padding:3px 0">Pangkat/Gol</td><td style="border:none;padding:3px">: '+(identitas['pp-pangkat']||'-')+'</td></tr><tr><td style="border:none;padding:3px 0">Jabatan</td><td style="border:none;padding:3px">: '+(identitas['pp-jabatan']||'-')+'</td></tr><tr><td style="border:none;padding:3px 0">Unit Kerja</td><td style="border:none;padding:3px">: '+(identitas['pp-unit']||identitas['id-unit']||'-')+'</td></tr></table>';
+document.getElementById('atasan-info').innerHTML=info;
 renderRHKAtasan();
 }
 function addRHKAtasan(){
@@ -1769,10 +1755,14 @@ function cetakSKPAtasan(){
 let data=getAtasanData();
 let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
 let tahun=getActivePeriod();
+let nama=identitas['pp-nama']||'-';
+let nip=identitas['pp-nip']||'-';
+let jabatan=identitas['pp-jabatan']||'-';
+let unit=identitas['pp-unit']||identitas['id-unit']||'-';
 let w=window.open('','','width=800,height=600');
 w.document.write('<html><head><title>SKP Atasan Langsung</title><style>@page{size:A4 landscape;margin:1in 1in 1in 1.2in}body{font-family:Times New Roman,serif;font-size:12px;padding:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px;font-size:11px}h3{text-align:center;margin-bottom:15px}</style></head><body>');
 w.document.write('<h3>SASARAN KINERJA PEGAWAI<br>PEJABAT PENILAI KINERJA<br>TAHUN '+tahun+'</h3>');
-w.document.write('<table style="margin-bottom:15px;border:none;width:50%"><tr><td style="border:none;width:100px">Nama</td><td style="border:none">: '+(data.nama||'-')+'</td></tr><tr><td style="border:none">NIP</td><td style="border:none">: '+(data.nip||'-')+'</td></tr><tr><td style="border:none">Jabatan</td><td style="border:none">: '+(data.jabatan||'-')+'</td></tr><tr><td style="border:none">Unit Kerja</td><td style="border:none">: '+(data.unit||'-')+'</td></tr></table>');
+w.document.write('<table style="margin-bottom:15px;border:none;width:50%"><tr><td style="border:none;width:100px">Nama</td><td style="border:none">: '+nama+'</td></tr><tr><td style="border:none">NIP</td><td style="border:none">: '+nip+'</td></tr><tr><td style="border:none">Jabatan</td><td style="border:none">: '+jabatan+'</td></tr><tr><td style="border:none">Unit Kerja</td><td style="border:none">: '+unit+'</td></tr></table>');
 w.document.write('<table><thead><tr><th>No</th><th>Rencana Hasil Kerja</th><th>Indikator Kinerja Individu</th><th>Target</th></tr></thead><tbody>');
 if(data.rhk)data.rhk.forEach((r,i)=>{w.document.write('<tr><td style="text-align:center">'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td></tr>');});
 w.document.write('</tbody></table></body></html>');
