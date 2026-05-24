@@ -200,6 +200,7 @@ tr:nth-child(even){background:#f8f9fa}
 <h3>Matriks Pembagian Peran dan Hasil</h3>
 <div class="btn-group">
 <button class="btn btn-success" onclick="addRHKMatrik()">&#10133; Tambah RHK</button>
+<button class="btn" onclick="addKolomMatrik()">&#10133; Tambah Kolom RHK</button>
 <button class="btn btn-primary" onclick="editRHKMatrik()">&#9999;&#65039; Edit RHK</button>
 <button class="btn btn-print" onclick="cetakMatrik()">&#128424; Cetak Matrik</button>
 </div>
@@ -1836,12 +1837,13 @@ return data;
 function saveMatrikData(data){localStorage.setItem(getKey('matrik-peran'),JSON.stringify(data));}
 function renderMatrik(){
 let data=getMatrikData();
+let cols=data.rows[0].rhk.length;
 let html='<table class="data-table" style="font-size:10px;min-width:1200px"><thead><tr><th style="width:30px">No</th><th style="min-width:100px">Pegawai</th><th style="min-width:100px">Jabatan</th>';
-for(let i=1;i<=12;i++){html+='<th>RHK '+i+'</th>';}
+for(let i=1;i<=cols;i++){html+='<th>RHK '+i+'</th>';}
 html+='</tr></thead><tbody>';
 data.rows.forEach((row,ri)=>{
 html+='<tr'+(ri===0?' style="background:#e8f4fd"':'')+'><td>'+(ri+1)+'</td><td><strong>'+row.pegawai+'</strong></td><td>'+row.jabatan+'</td>';
-for(let i=0;i<12;i++){html+='<td style="font-size:9px">'+(row.rhk[i]||'<span style="color:#ccc">-</span>')+'</td>';}
+for(let i=0;i<cols;i++){html+='<td style="font-size:9px">'+(row.rhk[i]||'<span style="color:#ccc">-</span>')+'</td>';}
 html+='</tr>';
 });
 html+='</tbody></table>';
@@ -1851,23 +1853,30 @@ function addRHKMatrik(){
 let data=getMatrikData();
 let rowIdx=parseInt(prompt('Baris ke berapa? (1=Atasan, 2=Pegawai, dst)'));
 if(isNaN(rowIdx)||rowIdx<1||rowIdx>data.rows.length){alert('Nomor baris tidak valid.');return;}
-let colIdx=parseInt(prompt('Kolom RHK ke berapa? (1-12)'));
-if(isNaN(colIdx)||colIdx<1||colIdx>12){alert('Nomor kolom tidak valid (1-12).');return;}
+let colIdx=parseInt(prompt('Kolom RHK ke berapa? (1-'+data.rows[0].rhk.length+')'));
+if(isNaN(colIdx)||colIdx<1||colIdx>data.rows[0].rhk.length){alert('Nomor kolom tidak valid.');return;}
 let isi=prompt('Isi RHK:');
 if(isi===null)return;
 data.rows[rowIdx-1].rhk[colIdx-1]=isi;
 saveMatrikData(data);
 renderMatrik();
 }
+function addKolomMatrik(){
+let data=getMatrikData();
+data.rows.forEach(row=>{row.rhk.push('');});
+saveMatrikData(data);
+renderMatrik();
+}
 function editRHKMatrik(){
 let data=getMatrikData();
+let cols=data.rows[0].rhk.length;
 let container=document.getElementById('matrik-container');
 let html='<table class="data-table" style="font-size:10px;min-width:1200px"><thead><tr><th style="width:30px">No</th><th style="min-width:100px">Pegawai</th><th style="min-width:100px">Jabatan</th>';
-for(let i=1;i<=12;i++){html+='<th>RHK '+i+'</th>';}
+for(let i=1;i<=cols;i++){html+='<th>RHK '+i+'</th>';}
 html+='</tr></thead><tbody>';
 data.rows.forEach((row,ri)=>{
 html+='<tr><td>'+(ri+1)+'</td><td><input class="matrik-field" data-row="'+ri+'" data-field="pegawai" value="'+row.pegawai.replace(/"/g,'&quot;')+'" style="width:100%;padding:3px;font-size:10px"></td><td><input class="matrik-field" data-row="'+ri+'" data-field="jabatan" value="'+row.jabatan.replace(/"/g,'&quot;')+'" style="width:100%;padding:3px;font-size:10px"></td>';
-for(let i=0;i<12;i++){html+='<td><textarea class="matrik-rhk" data-row="'+ri+'" data-col="'+i+'" style="width:100%;height:50px;padding:3px;font-size:9px;resize:vertical">'+(row.rhk[i]||'')+'</textarea></td>';}
+for(let i=0;i<cols;i++){html+='<td><textarea class="matrik-rhk" data-row="'+ri+'" data-col="'+i+'" style="width:100%;height:50px;padding:3px;font-size:9px;resize:vertical">'+(row.rhk[i]||'')+'</textarea></td>';}
 html+='</tr>';
 });
 html+='</tbody></table>';
