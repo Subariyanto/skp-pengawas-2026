@@ -1766,7 +1766,7 @@ if(!tbody)return;
 let html='';
 if(data.rhk&&data.rhk.length>0){
 data.rhk.forEach((r,i)=>{
-html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td><button class="btn btn-primary" onclick="editRHKAtasan('+i+')">Edit</button> <button class="btn btn-danger" onclick="hapusRHKAtasan('+i+')">Hapus</button></td></tr>';
+html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td style="white-space:nowrap"><button onclick="editRHKAtasan('+i+')" title="Edit" style="border:none;background:none;cursor:pointer;font-size:16px">✏️</button><button onclick="hapusRHKAtasan('+i+')" title="Hapus" style="border:none;background:none;cursor:pointer;font-size:16px">🗑️</button></td></tr>';
 });
 }else{html+='<tr><td colspan="6" style="text-align:center;color:#999">Belum ada data</td></tr>';}
 tbody.innerHTML=html;
