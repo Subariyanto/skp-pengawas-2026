@@ -1828,7 +1828,7 @@ function cetakLaporan(){
 let area=document.getElementById('laporan-print-area');
 if(!area){alert('Generate laporan terlebih dahulu!');return;}
 let w=window.open('','','width=800,height=600');
-w.document.write('<html><head><title>Cetak Laporan Triwulan</title><style>body{font-family:Times New Roman,serif;padding:30px;font-size:14px;line-height:2}table{border-collapse:collapse;width:100%}td,th{padding:5px;font-size:12px}h3{margin:15px 0}h4{margin:10px 0}ol,ul{margin:5px 0 10px 20px}@media print{body{padding:20px}div[style*="page-break"]{page-break-before:always}}</style></head><body>');
+w.document.write('<html><head><title>Cetak Laporan Triwulan</title><style>@page{size:A4;margin:1in 1in 1in 1.2in}body{font-family:Times New Roman,serif;margin:0;padding:0;font-size:14px;line-height:2;counter-reset:page-num}table{border-collapse:collapse;width:100%}td,th{padding:5px;font-size:12px}h3{margin:15px 0}h4{margin:10px 0}ol,ul{margin:5px 0 10px 20px}.page-section{page-break-before:always;position:relative;padding-bottom:30px}.page-section::after{content:counter(page-num);counter-increment:page-num;position:fixed;bottom:0.5in;right:1in;font-size:12px}.first-page{page-break-before:avoid}@media print{body{padding:0}}</style></head><body>');
 w.document.write(area.innerHTML);
 w.document.write('</body></html>');
 w.document.close();
