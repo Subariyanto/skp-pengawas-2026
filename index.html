@@ -84,7 +84,6 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('guru')"><span class="icon">&#128104;</span>Data Guru</a>
 <div class="nav-group-label">SKP Pengawas</div>
 <a href="#" onclick="showPage('skp')"><span class="icon">&#128203;</span>SKP / RHK</a>
-<a href="#" onclick="showPage('evaluasi')"><span class="icon">&#128200;</span>Evaluasi Kinerja</a>
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
 <a href="#" onclick="showPage('kuadran')"><span class="icon">&#128208;</span>Kuadran & Distribusi</a>
 <div class="nav-group-label">Program Pendampingan</div>
@@ -209,25 +208,6 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 </div>
 <!-- EVALUASI -->
-<div class="page" id="page-evaluasi">
-<h2 style="margin-bottom:20px;color:var(--primary)">Evaluasi Kinerja</h2>
-<div class="tw-tabs">
-<div class="tw-tab active" onclick="showEvalTW(1)">Triwulan I</div>
-<div class="tw-tab" onclick="showEvalTW(2)">Triwulan II</div>
-<div class="tw-tab" onclick="showEvalTW(3)">Triwulan III</div>
-<div class="tw-tab" onclick="showEvalTW(4)">Triwulan IV</div>
-</div>
-<div class="card"><div id="eval-container"></div></div>
-<div class="card">
-<h3>Ringkasan Evaluasi</h3>
-<div id="eval-summary"></div>
-</div>
-<div class="btn-group">
-<button class="btn btn-primary" onclick="saveEval()">💾 Simpan</button>
-<button class="btn btn-success" onclick="hitungEval()">📊 Hitung Nilai</button>
-<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
-</div>
-</div>
 <!-- LAMPIRAN -->
 <div class="page" id="page-lampiran">
 <h2 style="margin-bottom:20px;color:var(--primary)">Lampiran SKP</h2>
