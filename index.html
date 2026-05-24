@@ -1028,17 +1028,17 @@ selR.addEventListener('change',function(){let rhk=RHK_DATA.find(r=>r.no==this.va
 }
 function showJadwalTW(tw){
 document.querySelectorAll('#page-jadwal .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
-let data=getJadwalData().filter(j=>{let m=new Date(j.tanggal).getMonth();let twJ=m<3?1:m<6?2:m<9?3:4;return twJ===tw;});
-let html='';
-data.forEach((j,i)=>{
 let allData=getJadwalData();
-let realIdx=allData.indexOf(j);
-let statusBadge=j.status==='Terlaksana'?'badge-sb':j.status==='Batal'?'badge-k':'badge-b';
+let data=[];
+allData.forEach((j,idx)=>{let m=new Date(j.tanggal).getMonth();let twJ=m<3?1:m<6?2:m<9?3:4;if(twJ===tw)data.push({item:j,realIdx:idx});});
+let html='';
 let md=getMadrasahData();
+data.forEach((d,i)=>{
+let j=d.item;
+let statusBadge=j.status==='Terlaksana'?'badge-sb':j.status==='Batal'?'badge-k':'badge-b';
 let namaMd=md[j.madrasahIdx]?md[j.madrasahIdx].nama:'-';
-let rhk=RHK_DATA.find(r=>r.no==j.rhkNo);
 html+='<tr><td>'+(i+1)+'</td><td>'+j.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+j.rhkNo+'</td><td style="font-size:11px">'+j.kegiatan+'</td><td><span class="badge '+statusBadge+'">'+j.status+'</span></td>';
-html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editJadwal('+realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusJadwal('+realIdx+')">&#128465;&#65039;</button></td></tr>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editJadwal('+d.realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusJadwal('+d.realIdx+')">&#128465;&#65039;</button></td></tr>';
 });
 if(!html)html='<tr><td colspan="7" style="text-align:center;color:#999">Belum ada jadwal di triwulan ini</td></tr>';
 document.getElementById('tbody-jadwal').innerHTML=html;
@@ -1142,16 +1142,17 @@ if(val){display.textContent=val;display.style.color='var(--text)';}else{display.
 }
 function showCatatanTW(tw){
 document.querySelectorAll('#page-catatan .tw-tab').forEach((t,i)=>t.classList.toggle('active',i===tw-1));
-let data=getCatatanData().filter(c=>{let m=new Date(c.tanggal).getMonth();let twC=m<3?1:m<6?2:m<9?3:4;return twC===tw;});
+let allData=getCatatanData();
+let data=[];
+allData.forEach((c,idx)=>{let m=new Date(c.tanggal).getMonth();let twC=m<3?1:m<6?2:m<9?3:4;if(twC===tw)data.push({item:c,realIdx:idx});});
 let html='';
 let md=getMadrasahData();
-data.forEach((c,i)=>{
-let allData=getCatatanData();
-let realIdx=allData.indexOf(c);
+data.forEach((d,i)=>{
+let c=d.item;
 let namaMd=md[c.madrasahIdx]?md[c.madrasahIdx].nama:'-';
 let fotoLink=c.link?'<a href="'+c.link+'" target="_blank" style="font-size:11px">&#128247; Lihat</a>':'-';
-html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+c.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+c.rhkNo+'</td><td style="font-size:11px">'+c.kegiatan+'</td><td style="font-size:11px">'+c.peserta+'</td><td style="font-size:11px">'+c.hasil.substring(0,40)+'</td><td style="font-size:11px">'+c.tindaklanjut.substring(0,40)+'</td><td>'+fotoLink+'</td>';
-html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editCatatan('+realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusCatatan('+realIdx+')">&#128465;&#65039;</button></td></tr>';
+html+='<tr><td>'+(i+1)+'</td><td style="font-size:11px">'+c.tanggal+'</td><td style="font-size:11px">'+namaMd+'</td><td>RHK '+c.rhkNo+'</td><td style="font-size:11px">'+c.kegiatan+'</td><td style="font-size:11px">'+c.peserta+'</td><td style="font-size:11px">'+(c.hasil||'').substring(0,40)+'</td><td style="font-size:11px">'+(c.tindaklanjut||'').substring(0,40)+'</td><td>'+fotoLink+'</td>';
+html+='<td style="white-space:nowrap"><button title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="editCatatan('+d.realIdx+')">&#9999;&#65039;</button><button title="Hapus" style="background:none;border:none;cursor:pointer;font-size:14px" onclick="hapusCatatan('+d.realIdx+')">&#128465;&#65039;</button></td></tr>';
 });
 if(!html)html='<tr><td colspan="10" style="text-align:center;color:#999">Belum ada catatan di triwulan ini</td></tr>';
 document.getElementById('tbody-catatan').innerHTML=html;
@@ -1187,6 +1188,15 @@ document.getElementById('cat-peserta').value=c.peserta;
 document.getElementById('cat-hasil').value=c.hasil;
 document.getElementById('cat-tindaklanjut').value=c.tindaklanjut;
 document.getElementById('cat-link').value=c.link||'';
+renderPesertaCheckboxes();
+restorePesertaChecks(c.peserta);
+}
+function restorePesertaChecks(pesertaStr){
+if(!pesertaStr)return;
+let names=pesertaStr.split(',').map(s=>s.trim());
+let checks=document.querySelectorAll('#cat-peserta-dropdown input[type=checkbox]');
+checks.forEach(cb=>{cb.checked=names.indexOf(cb.value)!==-1;});
+updatePesertaDisplay();
 }
 function hapusCatatan(idx){
 if(!confirm('Hapus catatan ini?'))return;
@@ -1196,6 +1206,8 @@ showCatatanTW(1);
 function resetFormCatatan(){
 catatanEditIndex=-1;
 ['cat-tanggal','cat-madrasah','cat-rhk','cat-kegiatan','cat-peserta','cat-hasil','cat-tindaklanjut','cat-link'].forEach(id=>{document.getElementById(id).value='';});
+renderPesertaCheckboxes();
+}
 }
 
 
