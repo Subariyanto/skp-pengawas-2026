@@ -261,6 +261,7 @@ tr:nth-child(even){background:#f8f9fa}
 <h3>Daftar Madrasah Binaan</h3>
 <div class="btn-group">
 <button class="btn btn-success" onclick="showAddMadrasah()">&#10133; Tambah Data</button>
+<button class="btn" onclick="downloadTemplateMadrasah()">&#128229; Template Excel</button>
 <button class="btn btn-primary" onclick="importExcelMadrasah()">📥 Import Excel</button>
 <input type="file" id="excel-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelFile(event)">
 </div>
@@ -979,6 +980,17 @@ madrasahEditIndex=-1;
 document.getElementById('add-madrasah-form').style.display='none';
 renderMadrasah();
 alert(madrasahEditIndex>=0?'Data madrasah berhasil diupdate!':'Data madrasah berhasil ditambahkan!');
+}
+function downloadTemplateMadrasah(){
+let headers=['nama','kepsek','hp','nsm','npsn','alamat','desa','kec'];
+let labels=['Nama Madrasah','Nama Kepala Madrasah','No. HP','NSM','NPSN','Alamat','Desa','Kecamatan'];
+let example=['MA Contoh','Ahmad, S.Pd','081234567890','131235090001','20580001','Jl. Raya No. 1','Sumbersari','Sumbersari'];
+let csvContent='\uFEFF'+labels.join(';')+'\n'+example.join(';')+'\n';
+let blob=new Blob([csvContent],{type:'application/vnd.ms-excel;charset=utf-8'});
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a');
+a.href=url;a.download='template_data_madrasah.xls';a.click();
+URL.revokeObjectURL(url);
 }
 function importExcelMadrasah(){
 document.getElementById('excel-file-input').click();
