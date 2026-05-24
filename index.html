@@ -1747,6 +1747,18 @@ data.rhk.push({rhk:rhk,indikator:indikator||'-',target:target||'-',perspektif:pe
 saveAtasanData(data);
 renderRHKAtasan();
 }
+function editRHKAtasan(idx){
+let data=getAtasanData();
+let r=data.rhk[idx];
+let rhk=prompt('Rencana Hasil Kerja Atasan:',r.rhk);
+if(rhk===null)return;
+let indikator=prompt('Indikator Kinerja:',r.indikator);
+let target=prompt('Target:',r.target);
+let perspektif=prompt('Perspektif:',r.perspektif||'');
+data.rhk[idx]={rhk:rhk,indikator:indikator||'-',target:target||'-',perspektif:perspektif||'-'};
+saveAtasanData(data);
+renderRHKAtasan();
+}
 function renderRHKAtasan(){
 let data=getAtasanData();
 let tbody=document.querySelector('#tbl-rhk-atasan tbody');
@@ -1754,7 +1766,7 @@ if(!tbody)return;
 let html='';
 if(data.rhk&&data.rhk.length>0){
 data.rhk.forEach((r,i)=>{
-html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td><button class="btn btn-danger" onclick="hapusRHKAtasan('+i+')">Hapus</button></td></tr>';
+html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td><button class="btn btn-primary" onclick="editRHKAtasan('+i+')">Edit</button> <button class="btn btn-danger" onclick="hapusRHKAtasan('+i+')">Hapus</button></td></tr>';
 });
 }else{html+='<tr><td colspan="6" style="text-align:center;color:#999">Belum ada data</td></tr>';}
 tbody.innerHTML=html;
