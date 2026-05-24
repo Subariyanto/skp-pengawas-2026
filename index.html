@@ -16,6 +16,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sidebar nav a .icon{margin-right:10px;font-size:16px}
 .sidebar nav .nav-group-label{padding:10px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-top:8px}
 .sidebar .credit{padding:15px;font-size:10px;text-align:center;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);margin-top:auto;width:100%}
+#matrik-container th{position:relative;overflow:hidden}#matrik-container th .col-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;background:transparent}#matrik-container th .col-resize:hover{background:rgba(0,0,0,.2)}
 .main{margin-left:var(--sidebar-w);flex:1;padding:20px;max-width:calc(100% - var(--sidebar-w))}
 .page{display:none}
 .page.active{display:block}
@@ -1838,8 +1839,8 @@ function saveMatrikData(data){localStorage.setItem(getKey('matrik-peran'),JSON.s
 function renderMatrik(){
 let data=getMatrikData();
 let cols=data.rows[0].rhk.length;
-let html='<table class="data-table" style="font-size:10px;min-width:2000px"><thead><tr><th style="width:30px">No</th><th style="min-width:100px">Pegawai</th><th style="min-width:100px">Jabatan</th>';
-for(let i=1;i<=cols;i++){html+='<th>RHK '+i+'</th>';}
+let html='<table class="data-table" id="matrik-table" style="font-size:10px;min-width:2000px;table-layout:fixed"><thead><tr><th style="width:30px">No<span class="col-resize"></span></th><th style="min-width:120px">Pegawai<span class="col-resize"></span></th><th style="min-width:120px">Jabatan<span class="col-resize"></span></th>';
+for(let i=1;i<=cols;i++){html+='<th style="min-width:130px">RHK '+i+'<span class="col-resize"></span></th>';}
 html+='</tr></thead><tbody>';
 data.rows.forEach((row,ri)=>{
 html+='<tr'+(ri===0?' style="background:#e8f4fd"':'')+'><td>'+(ri+1)+'</td><td><strong>'+row.pegawai+'</strong></td><td>'+row.jabatan+'</td>';
@@ -1848,6 +1849,22 @@ html+='</tr>';
 });
 html+='</tbody></table>';
 document.getElementById('matrik-container').innerHTML=html;
+initColResize();
+}
+function initColResize(){
+let handles=document.querySelectorAll('#matrik-container .col-resize');
+handles.forEach(handle=>{
+handle.addEventListener('mousedown',function(e){
+e.preventDefault();
+let th=this.parentElement;
+let startX=e.pageX;
+let startW=th.offsetWidth;
+function onMove(ev){th.style.width=(startW+(ev.pageX-startX))+'px';th.style.minWidth=(startW+(ev.pageX-startX))+'px';}
+function onUp(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);}
+document.addEventListener('mousemove',onMove);
+document.addEventListener('mouseup',onUp);
+});
+});
 }
 function addRHKMatrik(){
 let data=getMatrikData();
