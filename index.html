@@ -1698,7 +1698,6 @@ let tahun=getActivePeriod();
 let twLabel=['','Januari - Maret','April - Juni','Juli - September','Oktober - Desember'];
 let terlaksana=jadwal.filter(j=>j.status==='Terlaksana');
 let ps='page-break-before:always';
-let pn='<span class="page-num"></span>';
 let html='<div id="laporan-print-area" style="font-family:Times New Roman,serif;font-size:14px;line-height:2">';
 // COVER
 html+='<div class="lap-page first-page" style="text-align:center;padding:60px 40px;min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center">';
@@ -1712,7 +1711,7 @@ html+='<p style="font-size:14px;margin-bottom:5px">NIP. '+nip+'</p>';
 html+='<p style="font-size:14px;margin-bottom:60px">'+jbt+'</p>';
 html+='<p style="font-size:14px;font-weight:bold;margin-bottom:5px">KEMENTERIAN AGAMA KABUPATEN JEMBER</p>';
 html+='<p style="font-size:14px">TAHUN '+tahun+'</p>';
-html+=''+pn+'</div>';
+html+='</div>';
 // KATA PENGANTAR
 html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">KATA PENGANTAR</h3>';
@@ -1723,7 +1722,6 @@ html+='<p style="text-indent:40px">Semoga laporan ini dapat bermanfaat bagi peni
 html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">Jember, .................... '+tahun+'</p><p style="margin:0">Penyusun,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div>';
 html+='</div>';
 // HALAMAN PENGESAHAN
-html+=''+pn+'</div>';
 html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">HALAMAN PENGESAHAN</h3>';
 html+='<p style="text-indent:40px">Laporan Pelaksanaan Pendampingan Pengawas Madrasah Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+' ini disusun oleh:</p>';
