@@ -188,7 +188,7 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 <div class="card">
 <h3>Rencana Hasil Kerja Atasan</h3>
-<div class="btn-group"><button class="btn btn-success" onclick="addRHKAtasan()">&#10133; Tambah RHK Atasan</button><button class="btn btn-print" onclick="cetakSKPAtasan()">&#128424; Cetak</button></div>
+<div class="btn-group"><button class="btn btn-success" onclick="addRHKAtasan()">&#10133; Tambah RHK Atasan</button><button class="btn btn-primary" onclick="editRHKAtasanGlobal()">&#9999;&#65039; Edit RHK</button><button class="btn btn-print" onclick="cetakSKPAtasan()">&#128424; Cetak</button></div>
 <table class="data-table" id="tbl-rhk-atasan"><thead><tr><th>No</th><th>Rencana Hasil Kerja Atasan</th><th>Indikator Kinerja</th><th>Target</th><th>Perspektif</th><th>Aksi</th></tr></thead><tbody></tbody></table>
 </div>
 </div>
@@ -1747,8 +1747,14 @@ data.rhk.push({rhk:rhk,indikator:indikator||'-',target:target||'-',perspektif:pe
 saveAtasanData(data);
 renderRHKAtasan();
 }
-function editRHKAtasan(idx){
+function editRHKAtasanGlobal(){
 let data=getAtasanData();
+if(!data.rhk||data.rhk.length===0){alert('Belum ada RHK Atasan.');return;}
+let list=data.rhk.map((r,i)=>(i+1)+'. '+r.rhk).join('\n');
+let idx=prompt('Pilih nomor RHK yang ingin diedit:\n\n'+list);
+if(!idx)return;
+idx=parseInt(idx)-1;
+if(isNaN(idx)||idx<0||idx>=data.rhk.length){alert('Nomor tidak valid.');return;}
 let r=data.rhk[idx];
 let rhk=prompt('Rencana Hasil Kerja Atasan:',r.rhk);
 if(rhk===null)return;
@@ -1766,7 +1772,7 @@ if(!tbody)return;
 let html='';
 if(data.rhk&&data.rhk.length>0){
 data.rhk.forEach((r,i)=>{
-html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td style="white-space:nowrap"><button onclick="editRHKAtasan('+i+')" title="Edit" style="border:none;background:none;cursor:pointer;font-size:16px">✏️</button><button onclick="hapusRHKAtasan('+i+')" title="Hapus" style="border:none;background:none;cursor:pointer;font-size:16px">🗑️</button></td></tr>';
+html+='<tr><td>'+(i+1)+'</td><td>'+r.rhk+'</td><td>'+r.indikator+'</td><td>'+r.target+'</td><td>'+(r.perspektif||'-')+'</td><td style="white-space:nowrap"><button onclick="hapusRHKAtasan('+i+')" title="Hapus" style="border:none;background:none;cursor:pointer;font-size:16px">🗑️</button></td></tr>';
 });
 }else{html+='<tr><td colspan="6" style="text-align:center;color:#999">Belum ada data</td></tr>';}
 tbody.innerHTML=html;
