@@ -82,7 +82,6 @@ tr:nth-child(even){background:#f8f9fa}
 <a href="#" onclick="showPage('skp')"><span class="icon">&#128203;</span>SKP / RHK</a>
 <a href="#" onclick="showPage('evaluasi')"><span class="icon">&#128200;</span>Evaluasi Kinerja</a>
 <a href="#" onclick="showPage('lampiran')"><span class="icon">&#128196;</span>Lampiran SKP</a>
-<a href="#" onclick="showPage('eviden')"><span class="icon">&#128206;</span>Eviden</a>
 <a href="#" onclick="showPage('madrasah')"><span class="icon">&#127979;</span>Data Madrasah</a>
 <a href="#" onclick="showPage('guru')"><span class="icon">&#128104;</span>Data Guru</a>
 <a href="#" onclick="showPage('jadwal')"><span class="icon">&#128197;</span>Jadwal Pendampingan</a>
@@ -251,20 +250,6 @@ tr:nth-child(even){background:#f8f9fa}
 </div>
 </div>
 <!-- EVIDEN -->
-<div class="page" id="page-eviden">
-<h2 style="margin-bottom:20px;color:var(--primary)">Eviden / Bukti Dukung</h2>
-<div class="tw-tabs">
-<div class="tw-tab active" onclick="showEvidenTW(1)">Triwulan I</div>
-<div class="tw-tab" onclick="showEvidenTW(2)">Triwulan II</div>
-<div class="tw-tab" onclick="showEvidenTW(3)">Triwulan III</div>
-<div class="tw-tab" onclick="showEvidenTW(4)">Triwulan IV</div>
-</div>
-<div class="card"><div id="eviden-container"></div></div>
-<div class="btn-group">
-<button class="btn btn-primary" onclick="saveEviden()">💾 Simpan</button>
-<button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
-</div>
-</div>
 <!-- DATA MADRASAH -->
 <div class="page" id="page-madrasah">
 <h2 style="margin-bottom:20px;color:var(--primary)">Data Madrasah Dampingan</h2>
@@ -522,7 +507,6 @@ document.querySelector('.sidebar').classList.remove('open');
 if(id==='dashboard')renderDashboard();
 if(id==='skp')showTW(1);
 if(id==='evaluasi')showEvalTW(1);
-if(id==='eviden')showEvidenTW(1);
 if(id==='madrasah')renderMadrasah();
 if(id==='guru'){initGuruFilter();renderGuru();}
 if(id==='periode')renderPeriodePage();
