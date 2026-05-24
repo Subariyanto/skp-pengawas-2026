@@ -198,9 +198,12 @@ tr:nth-child(even){background:#f8f9fa}
 <h2 style="margin-bottom:20px;color:var(--primary)">Matrik Peran Hasil</h2>
 <div class="card">
 <h3>Matriks Pembagian Peran dan Hasil</h3>
-<p style="font-size:13px;color:#666;margin-bottom:15px">Matriks ini menunjukkan keterkaitan antara RHK Atasan Langsung dengan RHK Pengawas (pegawai yang dinilai).</p>
-<button class="btn btn-print" onclick="cetakMatrik()" style="margin-bottom:15px">&#128424; Cetak Matrik</button>
-<div id="matrik-container"></div>
+<div class="btn-group">
+<button class="btn btn-success" onclick="addRHKMatrik()">&#10133; Tambah RHK</button>
+<button class="btn btn-primary" onclick="editRHKMatrik()">&#9999;&#65039; Edit RHK</button>
+<button class="btn btn-print" onclick="cetakMatrik()">&#128424; Cetak Matrik</button>
+</div>
+<div id="matrik-container" style="overflow-x:auto;margin-top:15px"></div>
 </div>
 </div>
 
@@ -1814,39 +1817,82 @@ w.document.close();w.print();
 }
 
 // === MATRIK PERAN HASIL ===
-function renderMatrik(){
-let atasanData=getAtasanData();
-let rhkAtasan=atasanData.rhk||[];
+function getMatrikData(){
+let data=JSON.parse(localStorage.getItem(getKey('matrik-peran'))||'null');
+if(!data){
 let identitas=JSON.parse(localStorage.getItem(getKey('identitas'))||'{}');
-let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
-let jabatan=identitas['id-jabatan']||'Pengawas Madrasah';
 let ppNama=identitas['pp-nama']||'Dr. SANTOSO, S.Ag, M.Pd.';
 let ppJabatan=identitas['pp-jabatan']||'Kepala Kantor Kementerian Agama Kab. Jember';
-let html='';
-if(rhkAtasan.length===0){
-html='<p style="color:#999;text-align:center">Isi dulu RHK Atasan di menu SKP Atasan Langsung.</p>';
-}else{
-// Build matrix table
-html='<div style="overflow-x:auto"><table class="data-table" style="font-size:11px"><thead><tr><th style="width:30px">No</th><th style="width:120px">Pegawai</th><th style="width:120px">Jabatan</th>';
-rhkAtasan.forEach((ra,i)=>{html+='<th>RHK '+(i+1)+'</th>';});
-html+='</tr></thead><tbody>';
-// Row 1: Atasan
-html+='<tr style="background:#e8f4fd"><td>1</td><td><strong>'+ppNama+'</strong></td><td>'+ppJabatan+'</td>';
-rhkAtasan.forEach(ra=>{html+='<td>'+ra.rhk+'</td>';});
-html+='</tr>';
-// Row 2: Pegawai (Pengawas) - map RHK pegawai to atasan columns
-html+='<tr><td>2</td><td><strong>'+nama+'</strong></td><td>'+jabatan+'</td>';
-rhkAtasan.forEach(ra=>{
-let linked=RHK_DATA.filter(r=>r.rhkAtasan&&r.rhkAtasan.toLowerCase().includes(ra.rhk.substring(0,20).toLowerCase()));
-if(linked.length>0){
-html+='<td>'+linked.map(r=>'<div style="margin-bottom:4px;padding:3px;background:#f0fdf4;border-radius:3px;font-size:10px">RHK '+r.no+': '+r.rhk+'</div>').join('')+'</td>';
-}else{
-html+='<td style="color:#999;font-style:italic">-</td>';
-}});
-html+='</tr>';
-html+='</tbody></table></div>';
+let nama=identitas['id-nama']||'SUBARIYANTO, S.Pd, M.Pd.I.';
+let jabatan=identitas['id-jabatan']||'Pengawas Madrasah';
+data={rows:[
+{pegawai:ppNama,jabatan:ppJabatan,rhk:['','','','','','','','','','','','']},
+{pegawai:nama,jabatan:jabatan,rhk:['','','','','','','','','','','','']}
+]};
+saveMatrikData(data);
 }
+return data;
+}
+function saveMatrikData(data){localStorage.setItem(getKey('matrik-peran'),JSON.stringify(data));}
+function renderMatrik(){
+let data=getMatrikData();
+let html='<table class="data-table" style="font-size:10px;min-width:1200px"><thead><tr><th style="width:30px">No</th><th style="min-width:100px">Pegawai</th><th style="min-width:100px">Jabatan</th>';
+for(let i=1;i<=12;i++){html+='<th>RHK '+i+'</th>';}
+html+='</tr></thead><tbody>';
+data.rows.forEach((row,ri)=>{
+html+='<tr'+(ri===0?' style="background:#e8f4fd"':'')+'><td>'+(ri+1)+'</td><td><strong>'+row.pegawai+'</strong></td><td>'+row.jabatan+'</td>';
+for(let i=0;i<12;i++){html+='<td style="font-size:9px">'+(row.rhk[i]||'<span style="color:#ccc">-</span>')+'</td>';}
+html+='</tr>';
+});
+html+='</tbody></table>';
 document.getElementById('matrik-container').innerHTML=html;
+}
+function addRHKMatrik(){
+let data=getMatrikData();
+let rowIdx=parseInt(prompt('Baris ke berapa? (1=Atasan, 2=Pegawai, dst)'));
+if(isNaN(rowIdx)||rowIdx<1||rowIdx>data.rows.length){alert('Nomor baris tidak valid.');return;}
+let colIdx=parseInt(prompt('Kolom RHK ke berapa? (1-12)'));
+if(isNaN(colIdx)||colIdx<1||colIdx>12){alert('Nomor kolom tidak valid (1-12).');return;}
+let isi=prompt('Isi RHK:');
+if(isi===null)return;
+data.rows[rowIdx-1].rhk[colIdx-1]=isi;
+saveMatrikData(data);
+renderMatrik();
+}
+function editRHKMatrik(){
+let data=getMatrikData();
+let container=document.getElementById('matrik-container');
+let html='<table class="data-table" style="font-size:10px;min-width:1200px"><thead><tr><th style="width:30px">No</th><th style="min-width:100px">Pegawai</th><th style="min-width:100px">Jabatan</th>';
+for(let i=1;i<=12;i++){html+='<th>RHK '+i+'</th>';}
+html+='</tr></thead><tbody>';
+data.rows.forEach((row,ri)=>{
+html+='<tr><td>'+(ri+1)+'</td><td><input class="matrik-field" data-row="'+ri+'" data-field="pegawai" value="'+row.pegawai.replace(/"/g,'&quot;')+'" style="width:100%;padding:3px;font-size:10px"></td><td><input class="matrik-field" data-row="'+ri+'" data-field="jabatan" value="'+row.jabatan.replace(/"/g,'&quot;')+'" style="width:100%;padding:3px;font-size:10px"></td>';
+for(let i=0;i<12;i++){html+='<td><textarea class="matrik-rhk" data-row="'+ri+'" data-col="'+i+'" style="width:100%;height:50px;padding:3px;font-size:9px;resize:vertical">'+(row.rhk[i]||'')+'</textarea></td>';}
+html+='</tr>';
+});
+html+='</tbody></table>';
+container.innerHTML=html;
+// Change Edit button to Simpan
+let btn=document.querySelector('[onclick="editRHKMatrik()"]');
+btn.innerHTML='&#128190; Simpan';
+btn.setAttribute('onclick','simpanMatrik()');
+}
+function simpanMatrik(){
+let data=getMatrikData();
+document.querySelectorAll('.matrik-field').forEach(f=>{
+let ri=parseInt(f.dataset.row);
+data.rows[ri][f.dataset.field]=f.value;
+});
+document.querySelectorAll('.matrik-rhk').forEach(f=>{
+let ri=parseInt(f.dataset.row);
+let ci=parseInt(f.dataset.col);
+data.rows[ri].rhk[ci]=f.value;
+});
+saveMatrikData(data);
+let btn=document.querySelector('[onclick="simpanMatrik()"]');
+btn.innerHTML='&#9999;&#65039; Edit RHK';
+btn.setAttribute('onclick','editRHKMatrik()');
+renderMatrik();
 }
 function cetakMatrik(){
 let container=document.getElementById('matrik-container');
