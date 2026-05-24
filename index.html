@@ -1750,19 +1750,30 @@ renderRHKAtasan();
 function editRHKAtasanGlobal(){
 let data=getAtasanData();
 if(!data.rhk||data.rhk.length===0){alert('Belum ada RHK Atasan.');return;}
-let list=data.rhk.map((r,i)=>(i+1)+'. '+r.rhk).join('\n');
-let idx=prompt('Pilih nomor RHK yang ingin diedit:\n\n'+list);
-if(!idx)return;
-idx=parseInt(idx)-1;
-if(isNaN(idx)||idx<0||idx>=data.rhk.length){alert('Nomor tidak valid.');return;}
-let r=data.rhk[idx];
-let rhk=prompt('Rencana Hasil Kerja Atasan:',r.rhk);
-if(rhk===null)return;
-let indikator=prompt('Indikator Kinerja:',r.indikator);
-let target=prompt('Target:',r.target);
-let perspektif=prompt('Perspektif:',r.perspektif||'');
-data.rhk[idx]={rhk:rhk,indikator:indikator||'-',target:target||'-',perspektif:perspektif||'-'};
+let tbody=document.querySelector('#tbl-rhk-atasan tbody');
+let html='';
+data.rhk.forEach((r,i)=>{
+html+='<tr><td>'+(i+1)+'</td><td><input class="edit-rhk-field" data-idx="'+i+'" data-field="rhk" value="'+r.rhk.replace(/"/g,'&quot;')+'" style="width:100%;padding:4px;font-size:12px"></td><td><input class="edit-rhk-field" data-idx="'+i+'" data-field="indikator" value="'+r.indikator.replace(/"/g,'&quot;')+'" style="width:100%;padding:4px;font-size:12px"></td><td><input class="edit-rhk-field" data-idx="'+i+'" data-field="target" value="'+r.target.replace(/"/g,'&quot;')+'" style="width:100%;padding:4px;font-size:12px"></td><td><input class="edit-rhk-field" data-idx="'+i+'" data-field="perspektif" value="'+(r.perspektif||'').replace(/"/g,'&quot;')+'" style="width:100%;padding:4px;font-size:12px"></td><td></td></tr>';
+});
+tbody.innerHTML=html;
+// Change button to Simpan
+let btn=document.querySelector('[onclick="editRHKAtasanGlobal()"]');
+btn.innerHTML='&#128190; Simpan';
+btn.setAttribute('onclick','simpanEditRHKAtasan()');
+}
+function simpanEditRHKAtasan(){
+let data=getAtasanData();
+let fields=document.querySelectorAll('.edit-rhk-field');
+fields.forEach(f=>{
+let idx=parseInt(f.dataset.idx);
+let field=f.dataset.field;
+data.rhk[idx][field]=f.value;
+});
 saveAtasanData(data);
+// Restore button
+let btn=document.querySelector('[onclick="simpanEditRHKAtasan()"]');
+btn.innerHTML='&#9999;&#65039; Edit RHK';
+btn.setAttribute('onclick','editRHKAtasanGlobal()');
 renderRHKAtasan();
 }
 function renderRHKAtasan(){
