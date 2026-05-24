@@ -1698,9 +1698,10 @@ let tahun=getActivePeriod();
 let twLabel=['','Januari - Maret','April - Juni','Juli - September','Oktober - Desember'];
 let terlaksana=jadwal.filter(j=>j.status==='Terlaksana');
 let ps='page-break-before:always';
+let pn='<span class="page-num"></span>';
 let html='<div id="laporan-print-area" style="font-family:Times New Roman,serif;font-size:14px;line-height:2">';
 // COVER
-html+='<div style="text-align:center;padding:60px 40px;min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center">';
+html+='<div class="lap-page first-page" style="text-align:center;padding:60px 40px;min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center">';
 html+='<p style="font-size:16px;font-weight:bold;margin-bottom:40px">LAPORAN</p>';
 html+='<p style="font-size:18px;font-weight:bold;margin-bottom:10px">PELAKSANAAN PENDAMPINGAN</p>';
 html+='<p style="font-size:18px;font-weight:bold;margin-bottom:10px">PENGAWAS MADRASAH</p>';
@@ -1711,9 +1712,9 @@ html+='<p style="font-size:14px;margin-bottom:5px">NIP. '+nip+'</p>';
 html+='<p style="font-size:14px;margin-bottom:60px">'+jbt+'</p>';
 html+='<p style="font-size:14px;font-weight:bold;margin-bottom:5px">KEMENTERIAN AGAMA KABUPATEN JEMBER</p>';
 html+='<p style="font-size:14px">TAHUN '+tahun+'</p>';
-html+='</div>';
+html+=''+pn+'</div>';
 // KATA PENGANTAR
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">KATA PENGANTAR</h3>';
 html+='<p style="text-indent:40px">Puji syukur kehadirat Allah SWT yang telah melimpahkan rahmat dan hidayah-Nya sehingga Laporan Pelaksanaan Pendampingan Pengawas Madrasah Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+' ini dapat disusun dengan baik.</p>';
 html+='<p style="text-indent:40px">Laporan ini disusun sebagai bentuk pertanggungjawaban pelaksanaan tugas pengawasan dan pendampingan pada madrasah binaan di wilayah Kabupaten Jember. Laporan ini memuat kegiatan-kegiatan yang telah dilaksanakan selama Triwulan '+tw+' meliputi '+rhkTW.length+' Rencana Hasil Kerja (RHK) yang telah ditetapkan.</p>';
@@ -1722,7 +1723,8 @@ html+='<p style="text-indent:40px">Semoga laporan ini dapat bermanfaat bagi peni
 html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">Jember, .................... '+tahun+'</p><p style="margin:0">Penyusun,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div>';
 html+='</div>';
 // HALAMAN PENGESAHAN
-html+='<div style="'+ps+'">';
+html+=''+pn+'</div>';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">HALAMAN PENGESAHAN</h3>';
 html+='<p style="text-indent:40px">Laporan Pelaksanaan Pendampingan Pengawas Madrasah Triwulan '+tw+' ('+twLabel[tw]+') Tahun '+tahun+' ini disusun oleh:</p>';
 html+='<table style="margin:15px 0 15px 30px;border:none"><tr><td style="border:none;padding:3px 0;width:140px">Nama</td><td style="border:none;padding:3px">: '+nama+'</td></tr><tr><td style="border:none;padding:3px 0">NIP</td><td style="border:none;padding:3px">: '+nip+'</td></tr><tr><td style="border:none;padding:3px 0">Jabatan</td><td style="border:none;padding:3px">: '+jbt+'</td></tr><tr><td style="border:none;padding:3px 0">Unit Kerja</td><td style="border:none;padding:3px">: '+unit+'</td></tr></table>';
@@ -1730,7 +1732,7 @@ html+='<p>Telah diperiksa dan disahkan untuk digunakan sebagaimana mestinya.</p>
 html+='<div style="display:flex;justify-content:space-between;margin-top:50px"><div style="text-align:center;width:45%"><p style="margin:0">Penyusun,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div><div style="text-align:center;width:45%"><p style="margin:0">Mengesahkan,</p><p style="margin:0">'+ppJabatan+'</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+ppNama+'</p><p style="margin:0">NIP. '+ppNip+'</p></div></div>';
 html+='</div>';
 // DAFTAR ISI
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">DAFTAR ISI</h3>';
 html+='<table style="width:100%;border:none"><tr><td style="border:none;padding:5px 0">COVER</td><td style="border:none;text-align:right;padding:5px 0">i</td></tr>';
 html+='<tr><td style="border:none;padding:5px 0">KATA PENGANTAR</td><td style="border:none;text-align:right;padding:5px 0">ii</td></tr>';
@@ -1753,7 +1755,7 @@ html+='<tr><td style="border:none;padding:5px 0;padding-left:20px">B. Saran</td>
 html+='<tr><td style="border:none;padding:5px 0;font-weight:bold">DAFTAR LAMPIRAN</td><td style="border:none;text-align:right;padding:5px 0">8</td></tr>';
 html+='</table></div>';
 // BAB I
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">BAB I<br>PENDAHULUAN</h3>';
 html+='<h4>A. Latar Belakang</h4>';
 html+='<p style="text-indent:40px">Pengawas Madrasah memiliki peran strategis dalam meningkatkan mutu pendidikan di madrasah binaan. Sesuai dengan Peraturan Menteri PAN-RB Nomor 6 Tahun 2022 tentang Pengelolaan Kinerja Pegawai dan Perdirjen GTK Nomor 7328 Tahun 2023, setiap pengawas wajib menyusun Sasaran Kinerja Pegawai (SKP) dan melaksanakan pendampingan sesuai Rencana Hasil Kerja (RHK) yang telah ditetapkan.</p>';
@@ -1768,7 +1770,7 @@ html+='<table style="width:100%;border-collapse:collapse;margin:10px 0"><thead><
 md.forEach((m,i)=>{html+='<tr><td style="border:1px solid #000;padding:4px;font-size:12px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.nama+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.kepsek+'</td><td style="border:1px solid #000;padding:4px;font-size:12px">'+m.kec+'</td></tr>';});
 html+='</tbody></table></div>';
 // BAB II
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">BAB II<br>PELAKSANAAN KEGIATAN</h3>';
 html+='<h4>A. Jadwal Pelaksanaan</h4>';
 html+='<p style="text-indent:40px">Berikut jadwal pelaksanaan pendampingan pada Triwulan '+tw+':</p>';
@@ -1784,7 +1786,7 @@ html+='<ul><li>Target Kuantitas: '+r.aspekK+' = '+r.targetK+'</li><li>Target Wak
 });
 html+='</div>';
 // BAB III
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">BAB III<br>HASIL DAN PEMBAHASAN</h3>';
 html+='<h4>A. Hasil Pendampingan</h4>';
 html+='<p style="text-indent:40px">Berdasarkan pelaksanaan pendampingan pada Triwulan '+tw+', berikut hasil yang telah dicapai:</p>';
@@ -1799,7 +1801,7 @@ html+='<p style="text-indent:40px">Beberapa hal yang perlu diperhatikan:</p>';
 html+='<ol><li>Koordinasi dengan kepala madrasah berjalan dengan baik</li><li>Partisipasi guru dalam kegiatan pendampingan cukup aktif</li><li>Diperlukan tindak lanjut yang konsisten untuk memastikan keberlanjutan program</li></ol>';
 html+='</div>';
 // BAB IV
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">BAB IV<br>PENUTUP</h3>';
 html+='<h4>A. Kesimpulan</h4>';
 html+='<ol><li>Pelaksanaan pendampingan Triwulan '+tw+' telah berjalan sesuai dengan program yang telah disusun</li><li>Dari '+rhkTW.length+' RHK yang ditetapkan, seluruhnya telah dilaksanakan melalui kegiatan pendampingan pada madrasah binaan</li><li>Terdapat '+terlaksana.length+' jadwal pendampingan yang berstatus terlaksana</li><li>Hasil pendampingan menunjukkan adanya peningkatan mutu pengelolaan madrasah binaan</li></ol>';
@@ -1808,7 +1810,7 @@ html+='<ol><li>Perlu peningkatan intensitas pendampingan pada madrasah yang masi
 html+='<div style="margin-top:40px;text-align:center;margin-left:50%"><p style="margin:0">Jember, .................... '+tahun+'</p><p style="margin:0">Pengawas Madrasah,</p><div style="height:60px"></div><p style="font-weight:bold;text-decoration:underline;margin:0">'+nama+'</p><p style="margin:0">NIP. '+nip+'</p></div>';
 html+='</div>';
 // DAFTAR LAMPIRAN
-html+='<div style="'+ps+'">';
+html+='<div class="lap-page">';
 html+='<h3 style="text-align:center;margin-bottom:20px">DAFTAR LAMPIRAN</h3>';
 html+='<table style="width:100%;border:none">';
 let lampNo=1;
@@ -1827,8 +1829,15 @@ document.getElementById('laporan-preview').style.display='block';
 function cetakLaporan(){
 let area=document.getElementById('laporan-print-area');
 if(!area){alert('Generate laporan terlebih dahulu!');return;}
+// Number pages
+let pages=area.querySelectorAll('.lap-page');
+pages.forEach(function(el,i){
+let numEl=el.querySelector('.page-num');
+if(!numEl){numEl=document.createElement('div');numEl.className='page-num';numEl.style.cssText='text-align:center;font-size:12px;margin-top:20px';el.appendChild(numEl);}
+numEl.textContent=i>0?(i):'';// cover no number
+});
 let w=window.open('','','width=800,height=600');
-w.document.write('<html><head><title>Cetak Laporan Triwulan</title><style>@page{size:A4;margin:1in 1in 1in 1.2in}body{font-family:Times New Roman,serif;margin:0;padding:0;font-size:14px;line-height:2;counter-reset:page-num}table{border-collapse:collapse;width:100%}td,th{padding:5px;font-size:12px}h3{margin:15px 0}h4{margin:10px 0}ol,ul{margin:5px 0 10px 20px}.page-section{page-break-before:always;position:relative;padding-bottom:30px}.page-section::after{content:counter(page-num);counter-increment:page-num;position:fixed;bottom:0.5in;right:1in;font-size:12px}.first-page{page-break-before:avoid}@media print{body{padding:0}}</style></head><body>');
+w.document.write('<html><head><title>Cetak Laporan Triwulan</title><style>@page{size:A4;margin:1in 1in 1in 1.2in}body{font-family:Times New Roman,serif;margin:0;padding:0;font-size:14px;line-height:2}table{border-collapse:collapse;width:100%}td,th{padding:5px;font-size:12px}h3{margin:15px 0}h4{margin:10px 0}ol,ul{margin:5px 0 10px 20px}.lap-page{page-break-before:always}.first-page{page-break-before:avoid}.page-num{text-align:center;font-size:12px;margin-top:20px}@media print{.lap-page{page-break-before:always}.first-page{page-break-before:avoid}}</style></head><body>');
 w.document.write(area.innerHTML);
 w.document.write('</body></html>');
 w.document.close();
